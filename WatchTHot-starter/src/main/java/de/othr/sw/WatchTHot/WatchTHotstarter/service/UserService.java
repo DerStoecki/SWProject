@@ -1,6 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.service;
 
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.User;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

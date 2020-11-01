@@ -1,4 +1,4 @@
-package de.othr.sw.WatchTHot.WatchTHotstarter.entity;
+package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
