@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * The Actual User logging in to overview the Temperatures. NOT the mqttclient
+ */
 @Entity
 @Table(name="user")
 public class User {

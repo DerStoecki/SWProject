@@ -5,5 +5,5 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
  * It can have multiple floors and rooms.
  * In each Room there are multiple MqttClients (e.g. multiple thermometers and heaters etc)
  */
-public class Apartement {
+public class Apartment {
 }
