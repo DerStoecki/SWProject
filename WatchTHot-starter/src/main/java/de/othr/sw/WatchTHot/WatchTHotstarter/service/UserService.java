@@ -16,11 +16,14 @@ public class UserService {
     //TODO
     @GetMapping("/login")
     public User login(@RequestParam(value = "name", defaultValue = "World") String input, String pwd) {
+        //TODO PW + SALT + Pepper --> Accessor
+        //TODO Check if it is correct
+        //TODO LOGIN
         return null;
     }
 
     @GetMapping("/register")
-    public User register(){
+    public User register() {
         //woher kommen die Daten zum User
 
         User user = new User("FooUser", "Pwd");
