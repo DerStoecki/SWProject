@@ -38,4 +38,10 @@ public class UserService {
 
     }
 
+    @GetMapping("/register/differentUser")
+    public User registerDifferentUser(){
+        return new User("Foo", "Bar");
+    }
+
+
 }

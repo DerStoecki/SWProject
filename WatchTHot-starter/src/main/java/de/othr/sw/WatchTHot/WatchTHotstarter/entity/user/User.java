@@ -1,8 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -10,15 +8,16 @@ import java.util.List;
  */
 @Entity
 @Table(name="user")
+@SequenceGenerator(name = "user_generator", sequenceName = "user_generator", initialValue = 0)
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_generator")
     private String usernameId;
     private String pwd;
     //TODO MAKE CLASSES
     private Apartment apartment;
     private String name;
     private String familyName;
-    private List<User> apartmentMembers;
     private String salt;
 
 

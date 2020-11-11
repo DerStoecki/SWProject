@@ -1,4 +1,5 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 
-public class StandardUserVisualizer extends Visualizer {
+public enum Privilege {
+    READ, READWRITE, READWRITESUPER
 }
