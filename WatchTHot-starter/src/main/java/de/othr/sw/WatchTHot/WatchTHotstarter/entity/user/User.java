@@ -1,5 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.rolemanagement.Salt;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -7,18 +9,29 @@ import java.util.List;
  * The Actual User logging in to overview the Temperatures. NOT the mqttclient
  */
 @Entity
-@Table(name="user")
+@Table(name="USER", schema = "swwatchthot")
 @SequenceGenerator(name = "user_generator", sequenceName = "user_generator", initialValue = 0)
+@Access(AccessType.FIELD)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_generator")
-    private String usernameId;
+    @Column(name = "USER_ID")
+    private Long id;
+    @Column(name = "USER_NAME")
+    private String username;
+    @Column(name = "PASSWORD")
     private String pwd;
-    //TODO MAKE CLASSES
-    private Apartment apartment;
-    private String name;
+    @Column(name = "FIRST_NAME")
+    private String firstName;
+    @Column(name = "FAMILY_NAME")
     private String familyName;
-    private String salt;
+
+
+
+    @ManyToMany
+    private List<Apartment> apartments;
+    @OneToOne
+    private Salt salt;
 
 
     //CTOR
@@ -27,7 +40,7 @@ public class User {
 
 
     public User(String usernameId, String pwd) {
-        this.usernameId = usernameId;
+        this.id = usernameId;
         this.pwd = pwd;
         createSalt();
     }
@@ -35,12 +48,12 @@ public class User {
     private void createSalt() {
     }
 
-    public String getUsernameId() {
-        return usernameId;
+    public String getId() {
+        return id;
     }
 
-    public void setUsernameId(String usernameId) {
-        this.usernameId = usernameId;
+    public void setId(String usernameId) {
+        this.id = usernameId;
     }
 
     public String getPwd() {
@@ -56,7 +69,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return this.usernameId.hashCode();
+        return this.id.hashCode();
     }
 
     @Override
@@ -67,7 +80,7 @@ public class User {
         if (!obj.getClass().equals(User.class)) {
             return false;
         }
-        User otherStudent = (User) obj;
-        return this.usernameId.equals(otherStudent.usernameId);
+        User otherUser = (User) obj;
+        return this.id.equals(otherUser.id);
     }
 }

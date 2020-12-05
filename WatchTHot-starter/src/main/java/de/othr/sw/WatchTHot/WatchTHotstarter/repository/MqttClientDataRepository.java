@@ -1,4 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.repository;
 
-public interface MqttClientDataRepository {
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
+import org.springframework.data.repository.CrudRepository;
+
+public interface MqttClientDataRepository extends CrudRepository<MqttClientData, Long> {
 }
