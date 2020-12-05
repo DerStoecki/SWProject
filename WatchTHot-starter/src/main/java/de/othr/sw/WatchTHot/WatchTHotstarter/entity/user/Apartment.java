@@ -26,6 +26,21 @@ public class Apartment {
     @ManyToMany(mappedBy = "apartments")
     List<User> users;
 
+    public Long getId() {
+        return id;
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
 
     @Override
     public int hashCode() {
@@ -43,5 +58,7 @@ public class Apartment {
         Apartment otherApartment = (Apartment) obj;
         return this.id.equals(otherApartment.id);
     }
+
+
 
 }

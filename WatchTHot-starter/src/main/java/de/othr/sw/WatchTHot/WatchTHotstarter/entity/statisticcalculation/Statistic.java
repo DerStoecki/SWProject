@@ -1,5 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation;
 
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import org.joda.time.DateTime;
 
@@ -22,6 +23,8 @@ public class Statistic {
     private DateTime timeStamp;
     @Column(name = "IDENTIFIER")
     private String identifier;
+    @ManyToOne
+    private Room room;
 
 
     @Override

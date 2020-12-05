@@ -13,11 +13,16 @@ public class Salt {
     @Column(name="SALT_ID")
     private Long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "salt")
     private User user;
 
     @Column(name = "SALT_VALUE")
     private String saltValue;
+
+
+    public Salt(String saltValue){
+        this.saltValue = saltValue;
+    }
 
     @Override
     public int hashCode() {
@@ -35,5 +40,16 @@ public class Salt {
         Salt otherSalt = (Salt) obj;
         return this.id.equals(otherSalt.id);
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getSaltValue() {
+        return saltValue;
     }
 }
