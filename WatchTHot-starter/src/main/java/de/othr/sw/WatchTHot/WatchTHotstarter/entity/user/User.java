@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * The Actual User logging in to overview the Temperatures. NOT the mqttclient
  */
 @Entity
-@Table(name="USER", schema = "swwatchthot")
+@Table(name = "USER", schema = "swwatchthot")
 @SequenceGenerator(name = "user_generator", sequenceName = "user_generator", initialValue = 0)
 @Access(AccessType.FIELD)
 public class User {
@@ -52,7 +52,6 @@ public class User {
     private static final int KEY_LENGTH = 512;
 
 
-
     @ManyToMany
     private List<Apartment> apartments;
     @OneToOne
@@ -60,24 +59,30 @@ public class User {
 
 
     //CTOR
-    public User(){
+    public User() {
     }
     //Getter & Setter
 
 
     public User(String username, String pwd) throws IOException {
-       this.username = username;
+        this.username = username;
+
+        String pass = (pwd + this.salt.getSaltValue() + getPepper());
+        //https://www.baeldung.com/sha-256-hashing-java
+        this.pwd = Hashing.sha256().hashString(pass, StandardCharsets.UTF_8).toString();
+        this.firstName = firstName;
+        this.familyName = familyName;
+    }
+
+    private static String getPepper() throws IOException {
         //Copied from my Bachelor Coding in:
         // https://github.com/DerStoecki/openems/blob/feature/MQTT/io.openems.edge.bridge.mqtt/src/io/openems/edge/bridge/mqtt/component/AbstractMqttComponent.java
-        JsonObject jsonObject = new Gson().fromJson( new String(Files.readAllBytes(Paths.get("Pepper.json"))), JsonObject.class);
-        String pepper = jsonObject.get("Pepper").getAsString();
-        String pass = (pwd + this.salt.getSaltValue() + pepper);
-        //https://www.baeldung.com/sha-256-hashing-java
-        this.pwd= Hashing.sha256().hashString(pass, StandardCharsets.UTF_8).toString();
+        JsonObject jsonObject = new Gson().fromJson(new String(Files.readAllBytes(Paths.get("Pepper.json"))), JsonObject.class);
+        return jsonObject.get("Pepper").getAsString();
     }
 
     private static Salt createSalt() {
-        byte[] salt = new byte[32];
+        byte[] salt = new byte[16];
         RANDOM.nextBytes(salt);
         return new Salt(Arrays.toString(salt));
     }
@@ -110,7 +115,7 @@ public class User {
         return salt;
     }
 
-    public Apartment getApartment(Address address){
+    public Apartment getApartment(Address address) {
         AtomicReference<Apartment> apt = new AtomicReference<>();
         this.apartments.stream().filter(apartment -> apartment.getAddress().equals(address)).findFirst().ifPresent(apt::set);
 
@@ -122,8 +127,29 @@ public class User {
         return pwd;
     }
 
-    protected void setPwd(String pwd) {
-        this.pwd = pwd;
+    public void setPwd(String pwd) throws IOException {
+        createSalt();
+        //https://www.baeldung.com/sha-256-hashing-java
+        this.pwd = Hashing.sha256().hashString(getHashedPwd(pwd), StandardCharsets.UTF_8).toString();
+    }
+    private String getHashedPwd(String password) throws IOException {
+        return (pwd + this.salt.getSaltValue() + getPepper());
+    }
+
+    public void addApartment(Apartment apartment) {
+        this.apartments.add(apartment);
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
     @Override
@@ -141,5 +167,13 @@ public class User {
         }
         User otherUser = (User) obj;
         return this.id.equals(otherUser.id);
+    }
+
+    public void setPrivilege(Privilege privilegeToAllow) {
+        this.privilege = privilegeToAllow;
+    }
+
+    public boolean passwordIdentical(String password) throws IOException {
+        return this.pwd.equals(getHashedPwd(password));
     }
 }

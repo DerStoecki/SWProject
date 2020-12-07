@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="ADDRESS_ID")
     private Long id;
     @Column(name="STREET")
