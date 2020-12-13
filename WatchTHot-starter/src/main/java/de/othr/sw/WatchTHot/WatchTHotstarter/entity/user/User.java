@@ -7,8 +7,6 @@ import com.google.gson.stream.JsonReader;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.rolemanagement.Salt;
 
 import javax.persistence.*;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

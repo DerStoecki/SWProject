@@ -1,6 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class Apartment {
     }
 
     public List<Room> getRooms() {
-        return rooms;
+        return Collections.unmodifiableList(this.rooms);
     }
 
     public Address getAddress() {
@@ -39,7 +40,7 @@ public class Apartment {
     }
 
     public List<User> getUsers() {
-        return users;
+        return Collections.unmodifiableList(this.users);
     }
 
     @Override

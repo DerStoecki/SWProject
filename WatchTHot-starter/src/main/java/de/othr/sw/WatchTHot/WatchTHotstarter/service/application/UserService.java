@@ -22,15 +22,25 @@ public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
 
-    //TODO
+    private User currentloggedInUser;
+
+    /**
+     * Loggs in User; Usually Called by Visualizer Service
+     * @param username the Username; Usually by Visualizer Service; Usually from REST
+     * @param password same with Password
+     * @return The Optional<User>
+     * @throws LoginFailException if the Password is incorrect or User doesn't exist
+     * @throws IOException if password --> Pepper doesn't exist
+     */
     @Override
-    public Optional<User> login(String username, String password) throws LoginFailException, IOException {
+    public User login(String username, String password) throws LoginFailException, IOException {
         Optional<User> wantToLogin;
 
         wantToLogin = this.userRepository.getUserByUsername(username);
         if (wantToLogin.isPresent()) {
             if (wantToLogin.get().passwordIdentical(password)) {
-                return wantToLogin;
+                this.currentloggedInUser = wantToLogin.get();
+                return wantToLogin.get();
             } else {
                 throw new LoginFailException();
             }
@@ -40,7 +50,15 @@ public class UserService implements IUserService {
         }
     }
 
-
+    /**
+     * Register a User; Usually called when "Register different User" is successful and allows to register user
+     * @param username username for the new user
+     * @param password default password for the new user
+     * @param privilegeToGive the privilege the new User gets
+     * @return the new User
+     * @throws IOException if pepper can't be found
+     * @throws RegisterFailException if the user by username already exists!
+     */
     @Override
     public Optional<User> register(String username, String password, Privilege privilegeToGive) throws IOException, RegisterFailException {
         AtomicReference<Boolean> foundUser = new AtomicReference<>(false);
@@ -63,6 +81,17 @@ public class UserService implements IUserService {
 
     }
 
+
+    /**
+     * Register different User, when you are logged in and have the privileges (only possible for useres of tier 1-2)
+     * @param name username of new User
+     * @param pwd password of the new User
+     * @param currentUser the current loggedin User
+     * @param privilegeToAllow Privilege you want to give the user
+     * @throws PrivilegeToLowException if the Privilege you want to give is greater than the priv. of current logged in User
+     * @throws IOException if the pepper doesn't exist
+     * @throws RegisterFailException if the username already exists.
+     */
     @Override
     public void registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException {
         if (currentUser.getPrivilege().equals(Privilege.READ)) {
@@ -76,11 +105,14 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
-    public void setPrivilegeOfUser(Privilege privilegeToAllow, User user) {
-
-    }
-
+    /**
+     * Changes the Password of the current user
+     * @param oldPw old password
+     * @param newPwd new Password (will be checked earlier in the visualization if old password was typed in 2 correctly)
+     * @param user the current user where the pwd needs to be changed.
+     * @throws IOException Pepper not there
+     * @throws PasswordIncorrectException If the password (old password) was incorrect
+     */
     @Override
     public void changePassword(String oldPw, String newPwd, User user) throws IOException, PasswordIncorrectException {
         if(user.passwordIdentical(oldPw)){
@@ -91,6 +123,10 @@ public class UserService implements IUserService {
         }
     }
 
+    /**
+     * I dunno if this is needed so i leave it here for future stuff...but probably not relevant.
+     * @return the repository
+     */
     protected UserRepository getUserRepository() {
         return this.userRepository;
     }

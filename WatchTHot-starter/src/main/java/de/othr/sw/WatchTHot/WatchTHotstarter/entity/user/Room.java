@@ -5,6 +5,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Topic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class Room {
     private List<MqttClientData> data;
     @ManyToOne
     private Apartment apartment;
-    @OneToMany
+    @OneToMany(mappedBy = "room")
     private List<Statistic> statistics;
 
     @Override
@@ -43,5 +44,29 @@ public class Room {
         }
         Room otherRoom = (Room) obj;
         return this.id.equals(otherRoom.id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public int getFloor() {
+        return floor;
+    }
+
+    public List<MqttClientData> getData() {
+        return Collections.unmodifiableList(this.data);
+    }
+
+    public Apartment getApartment() {
+        return apartment;
+    }
+
+    public List<Statistic> getStatistics() {
+        return Collections.unmodifiableList(this.statistics);
     }
 }
