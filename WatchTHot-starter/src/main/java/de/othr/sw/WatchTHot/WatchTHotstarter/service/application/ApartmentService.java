@@ -4,19 +4,20 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.ApartmentRepository;
-import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IApartmentService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ApartmentService implements IApartmentService {
 
     @Autowired
     ApartmentRepository apartmentRepository;
-
-    MqttClientDataRepository clientDataRepository;
 
     IRoomService roomService = new RoomService();
     private List<Apartment> apartmentList;
@@ -25,6 +26,7 @@ public class ApartmentService implements IApartmentService {
 
     /**
      * Returns the roomService for Method-Usage.
+     *
      * @return this.roomService.
      */
     @Override
@@ -36,6 +38,7 @@ public class ApartmentService implements IApartmentService {
      * TODO AUSLAGERN IN EXTERNEN SERVICE --> METER DATA Complete oder lieber nur current? --> Abwägen
      * GGF Nur Clientdata Liste zurückgeben dann mappen auf payload bzw payload auslesen und dann für statistik etc nutzen;
      * TOPIC contains list of payloads....maybe put in room service who contains the mqttclientdataservice?
+     *
      * @return A List of MqttClients;
      */
     @Override
@@ -45,17 +48,19 @@ public class ApartmentService implements IApartmentService {
 
     /**
      * Return the apartments of the logged in User for Selection
+     *
      * @param loggedInUser the logged in User
      * @return List<Apartment> of current User
      */
     @Override
     public List<Apartment> getApartments(User loggedInUser) {
-        this.apartmentList = this.apartmentRepository.getApartmentsByUsers(loggedInUser);
+        this.apartmentList = loggedInUser.getApartments();
         return this.apartmentList;
     }
 
     /**
      * Sets the current apartment for RoomService important
+     *
      * @param selectedApartment usually from visualizer Service.
      */
     @Override
@@ -64,11 +69,27 @@ public class ApartmentService implements IApartmentService {
         this.roomService.loadRooms(this.apartment);
     }
 
+    /**
+     *
+     * @param apartmentToRemove the apartment
+     * @param userToRemove      the userToRemove
+     * @return return true if apartmentWasPresent
+     */
     @Override
-    public boolean removeApartmentFromUser(Apartment apartment, User user){
-        
-
-        return false;
+    @Transactional
+    public boolean removeApartmentFromUser(Apartment apartmentToRemove, User userToRemove) {
+        Optional<Apartment> apartmentOption = this.apartmentRepository.findById(apartmentToRemove.getId());
+        apartmentOption.ifPresent(apartment -> {
+            if (apartment.getUsers().size() > 0) {
+                List<User> users = apartment.getUsers();
+                users.stream().filter(user -> user.getId().equals(userToRemove.getId()))
+                        .findFirst().stream().collect(Collectors.toList()).forEach(user -> {
+                    user.removeApartment(apartment);
+                });
+            }
+            this.apartmentRepository.save(apartment);
+        });
+        return apartmentOption.isPresent();
     }
 
 }

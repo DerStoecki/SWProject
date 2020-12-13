@@ -18,13 +18,13 @@ public class Apartment {
     @Column(name="APARTMENT_ID")
     private Long id;
 
-    @OneToMany(mappedBy = "apartment")
+    @OneToMany(mappedBy = "apartment",cascade = {CascadeType.PERSIST})
     private List<Room> rooms;
 
     @ManyToOne
     private Address address;
 
-    @ManyToMany(mappedBy = "apartments")
+    @ManyToMany(mappedBy = "apartments", cascade = {CascadeType.PERSIST})
     List<User> users;
 
     public Long getId() {

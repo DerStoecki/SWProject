@@ -6,6 +6,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.repository.UserRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IUserService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -60,6 +61,7 @@ public class UserService implements IUserService {
      * @throws RegisterFailException if the user by username already exists!
      */
     @Override
+    @Transactional
     public Optional<User> register(String username, String password, Privilege privilegeToGive) throws IOException, RegisterFailException {
         AtomicReference<Boolean> foundUser = new AtomicReference<>(false);
         this.userRepository.findAll().forEach(user -> {
@@ -93,6 +95,7 @@ public class UserService implements IUserService {
      * @throws RegisterFailException if the username already exists.
      */
     @Override
+    @Transactional
     public void registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException {
         if (currentUser.getPrivilege().equals(Privilege.READ)) {
             throw new PrivilegeToLowException();
@@ -114,6 +117,7 @@ public class UserService implements IUserService {
      * @throws PasswordIncorrectException If the password (old password) was incorrect
      */
     @Override
+    @Transactional
     public void changePassword(String oldPw, String newPwd, User user) throws IOException, PasswordIncorrectException {
         if(user.passwordIdentical(oldPw)){
             user.setPwd(newPwd);
@@ -121,6 +125,12 @@ public class UserService implements IUserService {
         } else {
             throw new PasswordIncorrectException();
         }
+    }
+
+    @Override
+    @Transactional
+    public void saveUserChanges(User user) {
+        this.userRepository.save(user);
     }
 
     /**

@@ -174,4 +174,8 @@ public class User {
     public boolean passwordIdentical(String password) throws IOException {
         return this.pwd.equals(getHashedPwd(password));
     }
+
+    public void removeApartment(Apartment apartment) {
+        this.apartments.remove(apartment);
+    }
 }
