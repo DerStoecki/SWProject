@@ -12,8 +12,10 @@ public class Payload {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PAYLOAD_ID")
     private Long id;
-    @Column(name = "TOPIC")
-    private String topic;
+    @ManyToOne()
+    private Topic topic;
+
+
     @Column(name = "ENTRY")
     private String payloadEntry;
     @Column(name = "TIMESTAMP")
@@ -36,5 +38,21 @@ public class Payload {
         Payload otherPayload = (Payload) obj;
         return this.id.equals(otherPayload.id);
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public String getPayloadEntry() {
+        return payloadEntry;
+    }
+
+    public DateTime getTimeStamp() {
+        return timeStamp;
     }
 }

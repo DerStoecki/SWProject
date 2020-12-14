@@ -69,4 +69,10 @@ public class Room {
     public List<Statistic> getStatistics() {
         return Collections.unmodifiableList(this.statistics);
     }
+
+    public void addStatistic(Statistic statistic) {
+        if(!this.getStatistics().contains(statistic)){
+            this.statistics.add(statistic);
+        }
+    }
 }

@@ -1,10 +1,8 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
-
 import javax.persistence.*;
 import java.util.List;
+
 
 @Entity
 @Table(name="TOPIC", schema = "swwatchthot" )
@@ -18,8 +16,11 @@ public class Topic {
     private String topic;
     @ManyToOne
     private MqttClientData mqttClientData;
-    @OneToMany
+    @OneToMany(mappedBy = "topic")
     private List<Payload> payloads;
+
+    @Transient
+    private Payload mostRecentPayload;
 
 
     @Override
@@ -37,5 +38,33 @@ public class Topic {
         }
         Topic otherTopic = (Topic) obj;
         return this.id.equals(otherTopic.id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public MqttClientData getMqttClientData() {
+        return mqttClientData;
+    }
+
+    public List<Payload> getPayloads() {
+        return payloads;
+    }
+
+    public Payload getMostRecentPayload(){
+        return this.mostRecentPayload;
+    }
+
+    /**
+     * Usually called by MQTT SERVER SERVICE!!!! (UPDATES PAYLOAD)
+     * @param mostRecentPayload
+     */
+    public void setMostRecentPayload(Payload mostRecentPayload) {
+        this.mostRecentPayload = mostRecentPayload;
     }
 }

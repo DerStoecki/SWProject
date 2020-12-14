@@ -18,14 +18,22 @@ public class Statistic {
     @Column(name="STATISTIC_ID")
     private Long id;
     @Column(name = "DATA")
-    private long data;
+    private String data;
     @Column(name = "TIMESTAMP")
     private DateTime timeStamp;
+    //DAILY/MONTHLY/WEEKLY/ETC ETC
     @Column(name = "IDENTIFIER")
     private String identifier;
     @ManyToOne
     private Room room;
 
+
+    public Statistic(StatisticIdentifier identifier, Room room, DateTime time, String data){
+        this.data = data;
+        this.room = room;
+        this.timeStamp = time;
+        this.identifier = identifier.name();
+    }
 
     @Override
     public int hashCode() {
