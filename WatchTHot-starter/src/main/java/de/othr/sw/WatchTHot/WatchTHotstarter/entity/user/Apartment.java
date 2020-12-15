@@ -1,5 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
@@ -58,6 +60,26 @@ public class Apartment {
         }
         Apartment otherApartment = (Apartment) obj;
         return this.id.equals(otherApartment.id);
+    }
+    @Transactional
+    public void addUser(User user){
+        if(!this.users.contains(user)){
+            this.users.add(user);
+        }
+    }
+    @Transactional
+    public void removeUser(User user){
+        this.users.remove(user);
+    }
+    @Transactional
+   public void addRoom(Room room){
+        if(!this.rooms.contains(room)){
+            this.rooms.add(room);
+        }
+    }
+    @Transactional
+    public void removeRoom(Room room){
+        this.rooms.remove(room);
     }
 
 

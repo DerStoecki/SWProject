@@ -85,6 +85,7 @@ public class ApartmentService implements IApartmentService {
                 users.stream().filter(user -> user.getId().equals(userToRemove.getId()))
                         .findFirst().stream().collect(Collectors.toList()).forEach(user -> {
                     user.removeApartment(apartment);
+                    apartmentToRemove.removeUser(user);
                 });
             }
             this.apartmentRepository.save(apartment);

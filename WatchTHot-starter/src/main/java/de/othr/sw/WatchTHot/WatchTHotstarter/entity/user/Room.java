@@ -1,8 +1,8 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Topic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -12,15 +12,15 @@ import java.util.List;
  * Room in apartments, has MqttClients.
  */
 @Entity
-@Table(name="ROOM", schema = "swwatchthot")
+@Table(name = "ROOM", schema = "swwatchthot")
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ROOM_ID")
     private Long id;
-    @Column(name="ROOM_NAME")
+    @Column(name = "ROOM_NAME")
     private String roomName;
-    @Column(name="FLOOR")
+    @Column(name = "FLOOR")
     private int floor;
     @OneToMany(mappedBy = "room")
     private List<MqttClientData> data;
@@ -70,9 +70,27 @@ public class Room {
         return Collections.unmodifiableList(this.statistics);
     }
 
+    @Transactional
     public void addStatistic(Statistic statistic) {
-        if(!this.getStatistics().contains(statistic)){
+        if (!this.getStatistics().contains(statistic)) {
             this.statistics.add(statistic);
         }
+    }
+
+    @Transactional
+    public void addData(MqttClientData data) {
+        if (!this.data.contains(data)) {
+            this.data.add(data);
+        }
+    }
+
+    @Transactional
+    public void removeStatistic(Statistic statistic) {
+        this.statistics.remove(statistic);
+    }
+
+    @Transactional
+    public void removeData(MqttClientData data){
+        this.data.remove(data);
     }
 }

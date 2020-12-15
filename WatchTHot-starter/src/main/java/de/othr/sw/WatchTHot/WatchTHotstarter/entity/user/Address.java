@@ -43,4 +43,24 @@ public class Address {
         return this.id.equals(otherAddress.id);
 
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getApartementNo() {
+        return apartementNo;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
 }

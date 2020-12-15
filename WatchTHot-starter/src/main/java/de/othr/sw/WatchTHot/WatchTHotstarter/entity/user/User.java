@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.rolemanagement.Salt;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.io.IOException;
@@ -124,28 +125,28 @@ public class User {
     public String getPwd() {
         return pwd;
     }
-
+    @Transactional
     public void setPwd(String pwd) throws IOException {
         createSalt();
         //https://www.baeldung.com/sha-256-hashing-java
         this.pwd = Hashing.sha256().hashString(getHashedPwd(pwd), StandardCharsets.UTF_8).toString();
     }
     private String getHashedPwd(String password) throws IOException {
-        return (pwd + this.salt.getSaltValue() + getPepper());
+        return (password + this.salt.getSaltValue() + getPepper());
     }
 
     public void addApartment(Apartment apartment) {
         this.apartments.add(apartment);
     }
-
+    @Transactional
     public void setUsername(String username) {
         this.username = username;
     }
-
+    @Transactional
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-
+    @Transactional
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
     }
