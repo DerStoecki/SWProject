@@ -7,6 +7,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IApartmentService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IUserService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,13 +23,19 @@ public class VisualizerService implements IVisualizerService {
     // TODO
     // Get Statistic --> Parse Further --> VIA ApartmentService-->RoomService-->StatisticOfDevice
     // Show DeviceData --> Get DeviceData --> EachRoom
-
-    IUserService userService = new UserService();
-    IApartmentService apartmentService = new ApartmentService();
+    @Autowired
+    private final IUserService userService;
+    @Autowired
+    private final IApartmentService apartmentService;
 
     private User loggedInUser;
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
+
+    public VisualizerService(IUserService userService, IApartmentService apartmentService) {
+        this.userService = userService;
+        this.apartmentService = apartmentService;
+    }
 
     /**
      * Logs in the User; Fails if user either doesn't exist or pw is incorrect. If correct load Apartments with the logged in User.
