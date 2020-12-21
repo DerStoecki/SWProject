@@ -6,6 +6,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.repository.UserRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IUserService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -17,13 +18,16 @@ import java.util.concurrent.atomic.AtomicReference;
 // Login User
 // Change Password
 
-
+@Service
 public class UserService implements IUserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private User currentloggedInUser;
+
+    public UserService(UserRepository repository){
+        this.userRepository = repository;
+    }
 
     /**
      * Loggs in User; Usually Called by Visualizer Service

@@ -2,13 +2,11 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.mqtt;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttClientService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttServerService;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-/**
- * Handles the Server and "Clients" (Simulations)
- */
+@Service
 public class MqttService {
-
-    private IMqttServerService serverService = new MqttServerService();
-    private IMqttClientService clientService = new MqttClientService();
-
+    IMqttClientService clientService = new MqttClientService();
+    IMqttServerService serverService = new MqttServerService();
 }

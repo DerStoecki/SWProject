@@ -7,6 +7,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.repository.ApartmentRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IApartmentService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -14,10 +15,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class ApartmentService implements IApartmentService {
 
+
+    private final ApartmentRepository apartmentRepository;
+
     @Autowired
-    ApartmentRepository apartmentRepository;
+            public ApartmentService(ApartmentRepository apartmentRepository){
+        this.apartmentRepository = apartmentRepository;
+    }
 
     IRoomService roomService = new RoomService();
     private List<Apartment> apartmentList;
