@@ -15,7 +15,10 @@
 	<description>Watch Thermometer in your House via MQTT T-Sensors (and maybe control them)</description>
 
 	<properties>
-		<java.version>15</java.version>
+			<java.version>15</java.version>
+			<bootstrap.version>4.0.0-2</bootstrap.version>
+			<webjars-locator.version>0.30</webjars-locator.version>
+			<lombok.version>1.18.2</lombok.version>
 	</properties>
 
 	<dependencies>
@@ -84,7 +87,38 @@
 			<artifactId>guava</artifactId>
 			<version>30.0-jre</version>
 		</dependency>
+
+
+
+
+	<!-- copied from https://frontbackend.com/thymeleaf/spring-boot-bootstrap-thymeleaf-toggle -->
+	<!-- Add typical dependencies for a web application -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>${bootstrap.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+			<version>${webjars-locator.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
+
+
 
 
 	<build>
