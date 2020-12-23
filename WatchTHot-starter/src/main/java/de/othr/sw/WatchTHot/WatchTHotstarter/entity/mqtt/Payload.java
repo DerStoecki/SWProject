@@ -21,6 +21,11 @@ public class Payload {
     @Column(name = "TIMESTAMP")
     private DateTime timeStamp;
 
+    public Payload(Topic topic, String payloadEntry, DateTime timeStamp) {
+        this.topic = topic;
+        this.payloadEntry = payloadEntry;
+        this.timeStamp = timeStamp;
+    }
 
     @Override
     public int hashCode() {

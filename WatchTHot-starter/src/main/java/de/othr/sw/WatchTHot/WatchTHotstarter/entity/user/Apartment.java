@@ -82,6 +82,9 @@ public class Apartment {
         this.rooms.remove(room);
     }
 
-
+    @Transactional
+    public void setAddress(Address address){
+        this.address = address;
+    }
 
 }

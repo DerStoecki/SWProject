@@ -1,0 +1,15 @@
+{
+  "topic": "Apartment0/Parents/Temperature",
+  "name" : "temperatureSensorParents0",
+  "qos": 0,
+  "remain": true,
+  "clean": false,
+  "DeviceType": "TEMPERATURE_SENSOR",
+  "Room":"Parents",
+  "Time": "",
+  "payload":
+  {"temperature": 21.0}
+
+
+
+}

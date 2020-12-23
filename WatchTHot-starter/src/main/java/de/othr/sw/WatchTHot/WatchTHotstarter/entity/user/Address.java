@@ -26,6 +26,10 @@ public class Address {
         this.city = city;
     }
 
+    public Address() {
+
+    }
+
     @Override
     public int hashCode() {
         return this.id.hashCode();

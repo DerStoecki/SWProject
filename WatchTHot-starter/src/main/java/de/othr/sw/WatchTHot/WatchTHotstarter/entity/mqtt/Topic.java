@@ -1,5 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,6 +24,9 @@ public class Topic {
     @Transient
     private Payload mostRecentPayload;
 
+    public Topic(String topic) {
+        this.topic = topic;
+    }
 
     @Override
     public int hashCode() {
@@ -66,5 +71,16 @@ public class Topic {
      */
     public void setMostRecentPayload(Payload mostRecentPayload) {
         this.mostRecentPayload = mostRecentPayload;
+    }
+
+    public void addPayload(Payload payload){
+        if(!this.payloads.contains(payload)) {
+            this.payloads.add(payload);
+        }
+
+    }
+    @Transactional
+    public void setMqttClientData(MqttClientData mqttClientData) {
+        this.mqttClientData = mqttClientData;
     }
 }

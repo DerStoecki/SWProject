@@ -1,0 +1,15 @@
+{
+  "topic": "Apartment0/Utility/Heatmeter",
+  "name": "Heatmeter0",
+  "qos": 0,
+  "remain": true,
+  "clean": false,
+  "DeviceType": "Meter",
+  "Room":"Utility",
+  "Time": "",
+  "payload":
+  {"meterState": 2586.95}
+
+
+
+}

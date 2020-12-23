@@ -3,6 +3,7 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.mqtt;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttClientService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttServerService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttService;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,19 +31,16 @@ public class MqttService implements IMqttService {
     }
 
     /**
-     * TODO in Server: Set Thermostate
-     * TODO in client --> Randomize Temperatures by new TemperatureValue
      * @param newTemperatureValue the new Temperature
-     * @return
+     * @return true on success
      */
     @Override
     public boolean setTemperature(float newTemperatureValue) {
-        return false;
+        return this.clientService.setTemperature(newTemperatureValue);
     }
 
-    /**
-     * TODO MAKE SCHEDULED every 10-20 seconds
-     */
+
+    @Scheduled(cron = "*/20 * * * * *")
     private void task(){
         this.serverService.publishTopicAndPayload(this.clientService.getDataSimulations());
     }
