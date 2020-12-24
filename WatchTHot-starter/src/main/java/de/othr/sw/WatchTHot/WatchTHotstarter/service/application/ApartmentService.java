@@ -1,8 +1,12 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Address;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
+import de.othr.sw.WatchTHot.WatchTHotstarter.repository.AddressRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.ApartmentRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IApartmentService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IRoomService;
@@ -11,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,16 +27,36 @@ public class ApartmentService implements IApartmentService {
 
 
     private final ApartmentRepository apartmentRepository;
+    private final AddressRepository addressRepository;
+    private final IRoomService roomService;
+    private Apartment dummyApartment;
 
+    private List<Apartment> apartmentList;
+    private Apartment currentApartment;
     @Autowired
-            public ApartmentService(ApartmentRepository apartmentRepository){
+            public ApartmentService(ApartmentRepository apartmentRepository, IRoomService roomService,
+                                    AddressRepository addressRepository) throws IOException {
         this.apartmentRepository = apartmentRepository;
+        this.roomService = roomService;
+        this.addressRepository = addressRepository;
+
+        createDummyApartment();
     }
 
-    IRoomService roomService = new RoomService();
-    private List<Apartment> apartmentList;
-    private Apartment apartment;
-
+    private void createDummyApartment() throws IOException {
+        String addressConfig = new String(Files.readAllBytes(Paths.get("/initJson/address/AddressApartment0.json")));
+        JsonObject jsonConfigObject = new Gson().fromJson(addressConfig, JsonObject.class);
+        Address address = new Address(jsonConfigObject.get("Street").getAsString(),
+                jsonConfigObject.get("apartmentNumber").getAsString(), jsonConfigObject.get("postalCode").getAsString(),
+                jsonConfigObject.get("City").getAsString());
+        addressRepository.save(address);
+        Apartment dummyApartment = new Apartment();
+        dummyApartment.setAddress(address);
+        this.roomService.setDummyData(dummyApartment);
+        this.roomService.getRoomsByApartment(dummyApartment).forEach(dummyApartment::addRoom);
+        this.apartmentRepository.save(dummyApartment);
+        this.dummyApartment = dummyApartment;
+    }
 
     /**
      * Returns the roomService for Method-Usage.
@@ -72,8 +99,8 @@ public class ApartmentService implements IApartmentService {
      */
     @Override
     public void setCurrentApartment(Apartment selectedApartment) {
-        this.apartment = selectedApartment;
-        this.roomService.loadRooms(this.apartment);
+        this.currentApartment = selectedApartment;
+        this.roomService.loadRooms(this.currentApartment);
     }
 
     /**
@@ -98,6 +125,18 @@ public class ApartmentService implements IApartmentService {
             this.apartmentRepository.save(apartment);
         });
         return apartmentOption.isPresent();
+    }
+
+    @Override
+    public void setDummyUsers(List<User> dummyUser) {
+        dummyUser.forEach(user -> this.dummyApartment.addUser(user));
+        this.apartmentRepository.save(dummyApartment);
+
+    }
+
+    @Override
+    public Apartment getDummyApartment() {
+        return this.dummyApartment;
     }
 
 }

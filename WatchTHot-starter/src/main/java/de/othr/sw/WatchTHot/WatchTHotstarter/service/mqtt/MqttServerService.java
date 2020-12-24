@@ -58,7 +58,10 @@ public class MqttServerService implements IMqttServerService {
             client = mqttClientData.orElseGet(() -> new MqttClientData(data.getName(), data.getDeviceType()));
 
                 if(client.getRoom() == null && room.isPresent()){
+                    //SET room for client and update room;
                     client.setRoom(room.get());
+                    room.get().addData(client);
+                    roomRepository.save(room.get());
                     changesWereMade = true;
 
                 }
@@ -66,6 +69,9 @@ public class MqttServerService implements IMqttServerService {
                     changesWereMade = true;
                 }
 
+                Topic topic = topicRepository.getTopicByTopic(data.getTopic());
+                topic.setMqttClientData(client);
+                topicRepository.save(topic);
             if(changesWereMade){
                 this.dataRepository.save(client);
             }

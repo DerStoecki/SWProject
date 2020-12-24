@@ -72,7 +72,7 @@ public class Apartment {
         this.users.remove(user);
     }
     @Transactional
-   public void addRoom(Room room){
+    public void addRoom(Room room){
         if(!this.rooms.contains(room)){
             this.rooms.add(room);
         }

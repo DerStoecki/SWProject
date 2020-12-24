@@ -20,22 +20,25 @@ import java.util.Optional;
 @RestController
 public class VisualizerService implements IVisualizerService {
 
-    // TODO
-    // Get Statistic --> Parse Further --> VIA ApartmentService-->RoomService-->StatisticOfDevice
-    // Show DeviceData --> Get DeviceData --> EachRoom
-    @Autowired
     private final IUserService userService;
-    @Autowired
+
     private final IApartmentService apartmentService;
 
     private User loggedInUser;
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
 
+    @Autowired
     public VisualizerService(IUserService userService, IApartmentService apartmentService) {
         this.userService = userService;
         this.apartmentService = apartmentService;
+        setupDummyApartment();
     }
+
+    private void setupDummyApartment() {
+        this.apartmentService.setDummyUsers(this.userService.getDummyUser(this.apartmentService.getDummyApartment()));
+    }
+
 
     /**
      * Logs in the User; Fails if user either doesn't exist or pw is incorrect. If correct load Apartments with the logged in User.

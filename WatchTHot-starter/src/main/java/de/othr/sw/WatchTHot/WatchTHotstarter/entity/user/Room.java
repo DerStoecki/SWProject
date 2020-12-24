@@ -29,6 +29,16 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Statistic> statistics;
 
+    public Room (String roomName, int floor){
+        this.roomName = roomName;
+        this.floor = floor;
+    }
+
+    public Room() {
+
+    }
+
+
     @Override
     public int hashCode() {
         return this.id.hashCode();
@@ -82,6 +92,11 @@ public class Room {
         if (!this.data.contains(data)) {
             this.data.add(data);
         }
+    }
+
+    @Transactional
+    public void setApartment(Apartment apartment){
+        this.apartment = apartment;
     }
 
     @Transactional

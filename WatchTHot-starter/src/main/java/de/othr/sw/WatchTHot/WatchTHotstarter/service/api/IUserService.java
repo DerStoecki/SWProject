@@ -1,5 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.service.api;
 
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.LoginFailException;
@@ -9,6 +10,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.RegisterFailExce
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
@@ -21,4 +23,6 @@ public interface IUserService {
     void changePassword(String oldPw, String newPwd, User user) throws IOException, PasswordIncorrectException;
     @Transactional
     void saveUserChanges(User user);
+
+    List<User> getDummyUser(Apartment dummyApartment);
 }

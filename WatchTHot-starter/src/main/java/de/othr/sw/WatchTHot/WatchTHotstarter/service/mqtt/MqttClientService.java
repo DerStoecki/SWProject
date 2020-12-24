@@ -11,10 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
@@ -24,7 +21,7 @@ public class MqttClientService implements IMqttClientService {
     private static final Random random = new Random();
 
 
-    private List<MqttClientSimulation> dataSimulations;
+    private List<MqttClientSimulation> dataSimulations = new ArrayList<>();
 
     public MqttClientService() throws IOException {
         this.initJson(new String(Files.readAllBytes(Paths.get("/payloadsimulation/meter/heatmeter.json"))));
@@ -80,7 +77,8 @@ public class MqttClientService implements IMqttClientService {
         //only 2 meter therefor no filter and usage of forEach -> eventhough runtime would be...3 or 4n and reduces to n...
         this.dataSimulations.forEach(mqttClientSimulation -> {
             if (!mqttClientSimulation.getDeviceType().equals(DeviceType.METER)){
-                mqttClientSimulation.setConsumption(Math.max(mqttClientSimulation.getConsumption() + (int)Math.ceil(oldTemperature + setPointTemperature), 0));
+                mqttClientSimulation.setConsumption(Math.max(mqttClientSimulation.getConsumption() +
+                        (int)Math.ceil(oldTemperature + setPointTemperature), 0));
                 if(mqttClientSimulation.getDeviceType().equals(DeviceType.THERMOSTAT)){
                     mqttClientSimulation.getPayload().addProperty("temperature", newTemperatureValue);
                     mqttClientSimulation.setTimeNow();
