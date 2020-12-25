@@ -26,7 +26,7 @@ public class MqttClientData {
     private DeviceType deviceType;
     @ManyToOne
     private Room room;
-    @OneToMany(mappedBy="mqttClientData")
+    @OneToMany(mappedBy="mqttClientData", cascade = CascadeType.ALL)
     private List<Topic> topics = new ArrayList<>();
     @Transient
     private static String format = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ";

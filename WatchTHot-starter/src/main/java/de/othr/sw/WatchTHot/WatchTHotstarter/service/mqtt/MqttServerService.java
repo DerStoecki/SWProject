@@ -5,10 +5,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientSimulation;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Payload;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Topic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
-import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
-import de.othr.sw.WatchTHot.WatchTHotstarter.repository.PayloadRepository;
-import de.othr.sw.WatchTHot.WatchTHotstarter.repository.RoomRepository;
-import de.othr.sw.WatchTHot.WatchTHotstarter.repository.TopicRepository;
+import de.othr.sw.WatchTHot.WatchTHotstarter.repository.*;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttServerService;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +19,19 @@ public class MqttServerService implements IMqttServerService {
     private final MqttClientDataRepository dataRepository;
     private final PayloadRepository payloadRepository;
     private final RoomRepository roomRepository;
+    private final ApartmentRepository apartmentRepository;
     private Map<String, Topic> topicNameAndTopic = new HashMap<>();
 
 
 
     public MqttServerService(TopicRepository topicRepository, MqttClientDataRepository dataRepo,
-                             PayloadRepository payloadRepository, RoomRepository roomRepository){
+                             PayloadRepository payloadRepository, RoomRepository roomRepository,
+                             ApartmentRepository apartmentRepository){
         this.topicRepository = topicRepository;
         this.dataRepository = dataRepo;
         this.payloadRepository = payloadRepository;
         this.roomRepository = roomRepository;
+        this.apartmentRepository = apartmentRepository;
     }
 
     /**
@@ -50,13 +50,15 @@ public class MqttServerService implements IMqttServerService {
     private void createNewMqttClient(List<MqttClientSimulation> dataSimulations) {
         dataSimulations.forEach(data->{
             boolean changesWereMade = false;
-            Optional<Room> room = Optional.ofNullable(this.roomRepository.getRoomByRoomName(data.getRoom()));
+            Optional<Room> room = Optional.ofNullable(this.roomRepository.getRoomByRoomNameAndApartment(data.getRoom(), apartmentRepository.getApartmentById(data.getApartmentId())));
             Optional<MqttClientData> mqttClientData = Optional.ofNullable(this.dataRepository.
                     getMqttClientDataByName(data.getName()));
             MqttClientData client;
             //Thank you IntelliJ
             client = mqttClientData.orElseGet(() -> new MqttClientData(data.getName(), data.getDeviceType()));
-
+            if(mqttClientData.isEmpty()){
+                dataRepository.save(client);
+            }
                 if(client.getRoom() == null && room.isPresent()){
                     //SET room for client and update room;
                     client.setRoom(room.get());
@@ -99,9 +101,11 @@ public class MqttServerService implements IMqttServerService {
                 if(!key.equals("")){
                     Payload payload = new Payload(topic, dataSimulation.getPayload().get(key).getAsString(), dataSimulation.getTime());
                     payloadRepository.save(payload);
-                    topic.setMostRecentPayload(payload);
-                    topic.addPayload(payload);
-                    topicRepository.save(topic);
+                    if(topic.addPayload(payload)) {
+                        topic.setMostRecentPayload(payload);
+                        topicRepository.save(topic);
+                    }
+
                 }
             });
     }

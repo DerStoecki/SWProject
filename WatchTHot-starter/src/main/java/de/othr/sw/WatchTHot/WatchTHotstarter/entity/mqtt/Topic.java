@@ -19,7 +19,7 @@ public class Topic {
     private String topic;
     @ManyToOne
     private MqttClientData mqttClientData;
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(mappedBy = "topic", cascade = {CascadeType.ALL})
     private List<Payload> payloads = new ArrayList<>();
 
     @Transient
@@ -76,11 +76,14 @@ public class Topic {
         this.mostRecentPayload = mostRecentPayload;
     }
 
-    public void addPayload(Payload payload){
+    @Transactional
+    public boolean addPayload(Payload payload){
         if(!this.payloads.contains(payload)) {
             this.payloads.add(payload);
+            return true;
         }
 
+        return false;
     }
     @Transactional
     public void setMqttClientData(MqttClientData mqttClientData) {

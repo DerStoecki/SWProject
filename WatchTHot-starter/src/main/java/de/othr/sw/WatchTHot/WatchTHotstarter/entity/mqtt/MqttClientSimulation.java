@@ -82,4 +82,12 @@ public class MqttClientSimulation {
         }
         return false;
     }
+
+    /**
+     * In Clientsimulation always 1
+     * @return 1 bc its always 1 in simulation
+     */
+    public Long getApartmentId() {
+        return 1L;
+    }
 }
