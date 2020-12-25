@@ -74,7 +74,7 @@ public class User {
     private static String getPepper() throws IOException {
         //Copied from my Bachelor Coding in:
         // https://github.com/DerStoecki/openems/blob/feature/MQTT/io.openems.edge.bridge.mqtt/src/io/openems/edge/bridge/mqtt/component/AbstractMqttComponent.java
-        JsonObject jsonObject = new Gson().fromJson(new String(Files.readAllBytes(Paths.get("Pepper.json"))), JsonObject.class);
+        JsonObject jsonObject = new Gson().fromJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/entity/user/Pepper.json"))), JsonObject.class);
         return jsonObject.get("Pepper").getAsString();
     }
 

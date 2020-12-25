@@ -55,11 +55,11 @@ public class RoomService implements IRoomService {
     }
 
     private void createDummyRooms() throws IOException {
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/room/childrenRoom.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/room/kitchen.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/room/livingRoom.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/room/parentsRoom.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/room/utilityRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/childrenRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/kitchen.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/livingRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/parentsRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/utilityRoom.json"))));
     }
 
     private void initJson(String config){

@@ -24,22 +24,22 @@ public class MqttClientService implements IMqttClientService {
     private List<MqttClientSimulation> dataSimulations = new ArrayList<>();
 
     public MqttClientService() throws IOException {
-        this.initJson(new String(Files.readAllBytes(Paths.get("/payloadsimulation/meter/heatmeter.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/meter/heatmeter.json"))));
 
-        this.initJson(new String(Files.readAllBytes(Paths.get("/payloadsimulation/meter/watermeter.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/meter/watermeter.json"))));
 
         this.initJson(new String(Files.
-                readAllBytes(Paths.get("/payloadsimulation/temperatureSensor/temperatureSensorChildrenRoom.json"))));
+                readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/temperatureSensor/temperatureSensorChildrenRoom.json"))));
         this.initJson(new String(Files.
-                readAllBytes(Paths.get("/payloadsimulation/temperatureSensor/temperatureSensorKitchen.json"))));
+                readAllBytes(Paths.get("de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/temperatureSensor/temperatureSensorKitchen.json"))));
         this.initJson(new String(Files.
-                readAllBytes(Paths.get("/payloadsimulation/temperatureSensor/temperatureSensorLivingRoom.json"))));
+                readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/temperatureSensor/temperatureSensorLivingRoom.json"))));
         this.initJson(new String(Files.
-                readAllBytes(Paths.get("/payloadsimulation/temperatureSensor/temperatureSensorParents.json"))));
+                readAllBytes(Paths.get("de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/temperatureSensor/temperatureSensorParents.json"))));
         this.initJson(new String(Files.
-                readAllBytes(Paths.get("/payloadsimulation/temperatureSensor/temperatureSensoUtilityRoom.json"))));
+                readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/temperatureSensor/temperatureSensorUtilityRoom.json"))));
         this.initJson(new String(Files.
-                readAllBytes(Paths.get("/payloadsimulation/thermostat/thermostat.json"))));
+                readAllBytes(Paths.get("de/othr/sw/WatchTHot/WatchTHotstarter/service/mqtt/payloadsimulation/thermostat/thermostat.json"))));
 
     }
 

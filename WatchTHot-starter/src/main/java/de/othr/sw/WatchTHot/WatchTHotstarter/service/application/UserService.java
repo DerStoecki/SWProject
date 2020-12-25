@@ -38,9 +38,9 @@ public class UserService implements IUserService {
      * @throws IOException If file not found.
      */
     private void createDummyUser() throws IOException {
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/user/user0.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/user/superuser.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("/initJson/user/utilityuser.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/user/user0.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/user/superuser.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/user/utilityuser.json"))));
     }
 
     private void initJson(String config) throws IOException {
