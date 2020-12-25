@@ -111,7 +111,7 @@ public class RoomService implements IRoomService {
 
     @Override
     public void setDummyData(Apartment dummyApartment) {
-        this.dummyRooms.forEach(room -> room.setApartment(dummyApartment));
+        this.dummyRooms.forEach(room -> {room.setApartment(dummyApartment); roomRepository.save(room);});
 
     }
 

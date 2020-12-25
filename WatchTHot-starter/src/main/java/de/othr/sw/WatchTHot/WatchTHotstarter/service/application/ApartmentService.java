@@ -52,6 +52,7 @@ public class ApartmentService implements IApartmentService {
         addressRepository.save(address);
         Apartment dummyApartment = new Apartment();
         dummyApartment.setAddress(address);
+        apartmentRepository.save(dummyApartment);
         this.roomService.setDummyData(dummyApartment);
         this.roomService.getRoomsByApartment(dummyApartment).forEach(dummyApartment::addRoom);
         this.apartmentRepository.save(dummyApartment);

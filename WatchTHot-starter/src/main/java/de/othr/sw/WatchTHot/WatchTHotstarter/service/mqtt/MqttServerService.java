@@ -88,11 +88,21 @@ public class MqttServerService implements IMqttServerService {
     private void createNewPayloads(List<MqttClientSimulation> dataSimulations) {
         dataSimulations.forEach(dataSimulation->{
                 Topic topic = this.topicNameAndTopic.get(dataSimulation.getTopic());
-                Payload payload = new Payload(topic, dataSimulation.getPayload().getAsString(), dataSimulation.getTime());
-                payloadRepository.save(payload);
-                topic.setMostRecentPayload(payload);
-                topic.addPayload(payload);
-                topicRepository.save(topic);
+                String payloadString;
+                String key = "";
+                if(dataSimulation.getPayload().has("temperature")){
+                    key = "temperature";
+                } else if(dataSimulation.getPayload().has("meterState")){
+                    key = "meterState";
+                }
+
+                if(!key.equals("")){
+                    Payload payload = new Payload(topic, dataSimulation.getPayload().get(key).getAsString(), dataSimulation.getTime());
+                    payloadRepository.save(payload);
+                    topic.setMostRecentPayload(payload);
+                    topic.addPayload(payload);
+                    topicRepository.save(topic);
+                }
             });
     }
 

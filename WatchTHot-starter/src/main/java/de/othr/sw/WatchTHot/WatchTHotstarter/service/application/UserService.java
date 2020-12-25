@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,7 +25,7 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
 
     private User currentloggedInUser;
-    private List<User> dummyUser;
+    private List<User> dummyUser = new ArrayList<>();
 
     public UserService(UserRepository repository) throws IOException {
         this.userRepository = repository;
@@ -46,6 +47,10 @@ public class UserService implements IUserService {
     private void initJson(String config) throws IOException {
         JsonObject jsonConfigObject = new Gson().fromJson(config, JsonObject.class);
         User newUser = new User(jsonConfigObject.get("username").getAsString(), jsonConfigObject.get("password").getAsString());
+        Optional<User> alreadyExist= userRepository.getUserByUsername(newUser.getUsername());
+        if(alreadyExist.isPresent()){
+            return;
+        }
         if(jsonConfigObject.has("firstName") && jsonConfigObject.has("familyName")){
             newUser.setFirstName(jsonConfigObject.get("firstName").getAsString());
             newUser.setFamilyName(jsonConfigObject.get("familyName").getAsString());

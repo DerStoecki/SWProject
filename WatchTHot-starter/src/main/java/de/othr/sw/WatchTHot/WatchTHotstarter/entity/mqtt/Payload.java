@@ -19,12 +19,16 @@ public class Payload {
     @Column(name = "ENTRY")
     private String payloadEntry;
     @Column(name = "TIMESTAMP")
-    private DateTime timeStamp;
+    private String timeStamp;
 
     public Payload(Topic topic, String payloadEntry, DateTime timeStamp) {
         this.topic = topic;
         this.payloadEntry = payloadEntry;
-        this.timeStamp = timeStamp;
+        this.timeStamp = timeStamp.toString();
+    }
+
+    public Payload() {
+
     }
 
     @Override
@@ -57,7 +61,7 @@ public class Payload {
         return payloadEntry;
     }
 
-    public DateTime getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 }

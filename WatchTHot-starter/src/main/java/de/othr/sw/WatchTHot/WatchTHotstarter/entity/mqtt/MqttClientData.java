@@ -5,6 +5,7 @@ import org.joda.time.DateTimeZone;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class MqttClientData {
     @ManyToOne
     private Room room;
     @OneToMany(mappedBy="mqttClientData")
-    private List<Topic> topics;
+    private List<Topic> topics = new ArrayList<>();
     @Transient
     private static String format = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ";
     @Transient
@@ -86,6 +87,7 @@ public class MqttClientData {
         this.room = room;
     }
 
+    @Transactional
     public boolean addTopic(Topic topic){
         if(!this.topics.contains(topic)){
             this.topics.add(topic);

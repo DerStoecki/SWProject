@@ -3,6 +3,7 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,7 +20,7 @@ public class Topic {
     @ManyToOne
     private MqttClientData mqttClientData;
     @OneToMany(mappedBy = "topic")
-    private List<Payload> payloads;
+    private List<Payload> payloads = new ArrayList<>();
 
     @Transient
     private Payload mostRecentPayload;
@@ -27,6 +28,8 @@ public class Topic {
     public Topic(String topic) {
         this.topic = topic;
     }
+
+    public Topic(){}
 
     @Override
     public int hashCode() {

@@ -47,7 +47,7 @@ public class StatisticService implements IStatisticService {
     }
     //TODO CALCULATION
     //Help from https://riptutorial.com/spring/example/21209/cron-expression <-- Examples
-    @Scheduled(cron = "0 0 * * * *")
+   /* @Scheduled(cron = "0 0 * * * *")
     private void calculateHourlyStatistic(){
         DateTime now = DateTime.now();
 
@@ -60,4 +60,6 @@ public class StatisticService implements IStatisticService {
     //Do every month and if month is quarter or is year ---> extra statistic with identifier
     @Scheduled(cron = "0 0 0 1 * ")
     private void calculateMonthly(){}
+    */
+
 }

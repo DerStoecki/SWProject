@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -50,7 +51,7 @@ public class User {
 
 
     @ManyToMany
-    private List<Apartment> apartments;
+    private List<Apartment> apartments = new ArrayList<>();
 
 
 
@@ -132,7 +133,7 @@ public class User {
     private String getHashedPwd(String password) throws IOException {
         return (password + this.salt + getPepper());
     }
-
+    @Transactional
     public void addApartment(Apartment apartment) {
         this.apartments.add(apartment);
     }

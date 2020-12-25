@@ -3,6 +3,7 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,14 +21,14 @@ public class Apartment {
     @Column(name="APARTMENT_ID")
     private Long id;
 
-    @OneToMany(mappedBy = "apartment",cascade = {CascadeType.PERSIST})
-    private List<Room> rooms;
+    @OneToMany(mappedBy = "apartment",cascade = {CascadeType.ALL})
+    private List<Room> rooms = new ArrayList<>();
 
     @ManyToOne
     private Address address;
 
-    @ManyToMany(mappedBy = "apartments", cascade = {CascadeType.PERSIST})
-    List<User> users;
+    @ManyToMany(mappedBy = "apartments", cascade = {CascadeType.ALL})
+    List<User> users = new ArrayList<>();
 
     public Long getId() {
         return id;

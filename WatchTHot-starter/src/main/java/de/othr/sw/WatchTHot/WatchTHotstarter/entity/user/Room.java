@@ -5,6 +5,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statist
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,11 +24,11 @@ public class Room {
     @Column(name = "FLOOR")
     private int floor;
     @OneToMany(mappedBy = "room")
-    private List<MqttClientData> data;
+    private List<MqttClientData> data = new ArrayList<>();
     @ManyToOne
     private Apartment apartment;
     @OneToMany(mappedBy = "room")
-    private List<Statistic> statistics;
+    private List<Statistic> statistics = new ArrayList<>();
 
     public Room (String roomName, int floor){
         this.roomName = roomName;

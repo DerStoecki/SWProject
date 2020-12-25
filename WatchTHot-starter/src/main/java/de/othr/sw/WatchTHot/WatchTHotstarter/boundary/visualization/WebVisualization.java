@@ -1,5 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.boundary.visualization;
 
+import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WebVisualization {
 
     private final IVisualizerService visualizerService;
+    private final IMqttService mqttService;
     private Environment environment;
     private String applicationMode;
 
+
     @Autowired
-    public WebVisualization(IVisualizerService visualizerService, Environment environment){
+    public WebVisualization(IVisualizerService visualizerService, IMqttService mqttService, Environment environment){
         this.visualizerService = visualizerService;
         this.environment = environment;
         this.applicationMode = environment.getProperty("app-mode");
+        this.mqttService = mqttService;
     }
 
     @RequestMapping("/")
