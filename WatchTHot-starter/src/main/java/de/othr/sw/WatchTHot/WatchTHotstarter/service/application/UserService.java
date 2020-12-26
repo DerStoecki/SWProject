@@ -177,7 +177,8 @@ public class UserService implements IUserService {
      * I dunno if this is needed so i leave it here for future stuff...but probably not relevant.
      * @return the repository
      */
-    protected UserRepository getUserRepository() {
+    @Override
+     public UserRepository getUserRepository() {
         return this.userRepository;
     }
 

@@ -172,7 +172,7 @@ public class User {
     }
 
     public boolean passwordIdentical(String password) throws IOException {
-        return this.pwd.equals(getHashedPwd(password));
+        return this.pwd.equals(Hashing.sha256().hashString(getHashedPwd(password), StandardCharsets.UTF_8).toString());
     }
 
     public void removeApartment(Apartment apartment) {

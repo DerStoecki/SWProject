@@ -3,6 +3,7 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.api;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
+import de.othr.sw.WatchTHot.WatchTHotstarter.repository.UserRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.LoginFailException;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PasswordIncorrectException;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PrivilegeToLowException;
@@ -25,4 +26,6 @@ public interface IUserService {
     void saveUserChanges(User user);
 
     List<User> getDummyUser(Apartment dummyApartment);
+
+    UserRepository getUserRepository();
 }

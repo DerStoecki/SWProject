@@ -2,6 +2,9 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.api;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
+import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.LoginFailException;
+
+import java.io.IOException;
 
 public interface IVisualizerService {
     IApartmentService getApartment();
@@ -9,4 +12,5 @@ public interface IVisualizerService {
     boolean removeOfDifferentUserApartment(User user, Apartment apartment);
 
     boolean removeOwnApartment(Apartment apartment);
+    User login(String username, String password) throws IOException, LoginFailException;
 }
