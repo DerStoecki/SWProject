@@ -1,10 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>SmartHome WatchTHot</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors and me Felix Stöcker">
+    <meta name="generator" content="Hugo 0.79.0">
+    <title>WatchTHot - Smarthome</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/grid/">
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link th:rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css} "/>
+    <link th:rel="media" th:href="@{/assets/media/smarthome/}"/>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../static/assets/bootstrap/css/bootstrap.min.css" th:href="@{/assets/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="../../static/assets/smarthome/grid.css/" th:href="@{/assets/smarthome/grid.css}" rel="stylesheet">
 </head>
-<body>
-<h1>Hello SmartHome!</h1>
+<body class="py-4">
+
+<main>
+    <div class="container">
+        <div th:object="${ApartmentWrapper.getApartments()}">
+
+        <h1>Your Smarthome Visualization</h1>
+        <p class="lead">Select your Apartment and watch your Rooms.</p>
+            <form method="post" th:object="${ApartmentWrapper}" th:action="@{/submitApartment}" id = "submitApartments">
+        <div th:if="${ApartmentWrapper.getApartments().size()==0}">
+            <p>No Apartments Available</p>
+        </div>
+                <div>
+            <th:block th:each="Apartment : ${ApartmentWrapper.getApartments()}">
+                <button class = "btn btn-primary" th:text="${Apartment.getId().toString()}"></button>
+            </th:block>
+                </div>
+            <div>
+                <tr th:each="apartment: ${ApartmentWrapper.getApartments()}">
+                    <td th:text="${apartment.getId()}"></td>
+                    <td th:text="${apartment.getAddress()}"></td>
+                </tr>
+            </div>
+                <label for="inputUsername" class="visually-hidden">Username</label>
+                <input type="text" id="inputUsername" class="form-control" placeholder="ApartmentId" th:field="${ApartmentWrapper.selectedId}" required autofocus>
+                <button class="w-100 btn btn-lg btn-primary" type="submit" id = "submit">Submit Apartment</button>
+                <p class="mt-5 mb-3 text-muted">&copy;2020-2021</p>
+            </form>
+        </div>
+    </div>
+</main>
 </body>
+
+
+<script>
+    document.getElementById("submitApartments").submit();
+</script>
+
+<script th:src="@{js/jquery/jquery.min.js}"></script>
+<script th:src="@{js/popper.js/umd/popper.min.js}"></script>
+<script th:src="@{js/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{assets/bootstrap4-toggle/bootstrap4-toggle.min.js}"></script>
+<script src = "../static/js/bootstrap/js.bootstrap.min.js"></script>
 </html>

@@ -87,5 +87,4 @@ public class Apartment {
     public void setAddress(Address address){
         this.address = address;
     }
-
 }
