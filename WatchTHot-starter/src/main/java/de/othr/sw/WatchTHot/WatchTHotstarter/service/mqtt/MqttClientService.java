@@ -67,13 +67,14 @@ public class MqttClientService implements IMqttClientService {
 
     /**
      * Set the Temperature of Thermostate and Thermometer and increase the consumption (later important for Meter)
+     * at least 10 °C
      * @param newTemperatureValue set By SuperUser
      * @return true on success
      */
     @Override
     public boolean setTemperature(float newTemperatureValue) {
         float oldTemperature = this.setPointTemperature;
-        this.setPointTemperature = newTemperatureValue;
+        this.setPointTemperature = Math.max(newTemperatureValue, 10);
         //only 2 meter therefor no filter and usage of forEach -> eventhough runtime would be...3 or 4n and reduces to n...
         this.dataSimulations.forEach(mqttClientSimulation -> {
             if (!mqttClientSimulation.getDeviceType().equals(DeviceType.METER)){
@@ -99,21 +100,34 @@ public class MqttClientService implements IMqttClientService {
 
         this.dataSimulations.stream().filter(mqttClientSimulation -> mqttClientSimulation.getDeviceType().
                 equals(DeviceType.TEMPERATURE_SENSOR)).forEach(sensor->{
-                    sensor.getPayload().addProperty("temperature", randomTemperature());
+                    //increase Temperature with 0.2°C tolerance
+                    if(this.setPointTemperature - 0.2 > sensor.getPayload().get("temperature").getAsFloat()) {
+                       sensor.getPayload().addProperty("temperature", randomTemperature(true, sensor.getPayload().get("temperature").getAsFloat()));
+                    }
+                    //Decrease Temperature with 0.5 °C tolerance
+                    else if(this.setPointTemperature + 0.5 < sensor.getPayload().get("temperature").getAsFloat()){
+                        sensor.getPayload().addProperty("temperature", randomTemperature(false,sensor.getPayload().get("temperature").getAsFloat()));
+                    }
                     sensor.setTimeNow();
+
         });
     }
 
     /**
      * Return random Float, usually cllaed by changePayloadsTemperatureSensor()
      * @return a random float
+     * @param increase should increase temperature
+     * @param temperature
      */
-    private float randomTemperature() {
+    private float randomTemperature(boolean increase, float temperature) {
         float maxDifference = 1.0f;
         float minDifference = 0.1f;
-        return random.nextFloat() * (maxDifference - minDifference)
-                + (random.nextBoolean()? minDifference : minDifference *-1);
+        if(increase) {
+           return temperature + random.nextFloat() * (maxDifference - minDifference);
 
+        } else {
+            return temperature - random.nextFloat() * (maxDifference - minDifference);
+        }
     }
 
     /**

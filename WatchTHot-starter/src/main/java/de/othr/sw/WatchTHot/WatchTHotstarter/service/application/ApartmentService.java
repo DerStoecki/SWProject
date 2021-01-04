@@ -46,6 +46,11 @@ public class ApartmentService implements IApartmentService {
     private void createDummyApartment() throws IOException {
         String addressConfig = new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/address/AddressApartment0.json")));
         JsonObject jsonConfigObject = new Gson().fromJson(addressConfig, JsonObject.class);
+        Optional<Apartment> existingApartment = Optional.ofNullable(this.apartmentRepository.getApartmentById(Long.parseLong("1")));
+        if(existingApartment.isPresent()){
+            this.dummyApartment = existingApartment.get();
+            return;
+        }
         Address address = new Address(jsonConfigObject.get("Street").getAsString(),
                 jsonConfigObject.get("apartmentNumber").getAsString(), jsonConfigObject.get("postalCode").getAsString(),
                 jsonConfigObject.get("City").getAsString());
@@ -130,7 +135,8 @@ public class ApartmentService implements IApartmentService {
 
     @Override
     public void setDummyUsers(List<User> dummyUser) {
-        dummyUser.forEach(user -> this.dummyApartment.addUser(user));
+        dummyUser.forEach(user ->
+                this.dummyApartment.addUser(user));
         this.apartmentRepository.save(dummyApartment);
 
     }

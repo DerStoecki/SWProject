@@ -7,6 +7,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.LoginFailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ public class WebVisualization {
     private User entityUser;
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
+    private Model roomModel;
 
 
     @Autowired
@@ -79,11 +81,21 @@ public class WebVisualization {
     public String submitApartment(WrapperApartment apartmentWrapper, Model model){
         Optional<Apartment> selectedApartment = this.apartmentList.stream().filter(apartment->apartment.getId().equals(Long.valueOf(apartmentWrapper.getSelectedId()))).findFirst();
         if(selectedApartment.isPresent()){
-            model.addAttribute("RoomList", this.visualizerService.getApartment().getRoomService().getRoomsByApartment(selectedApartment.get()));
-            return "smarthome/rooms";
+            this.selectedApartment = selectedApartment.get();
+            return "redirect:/smarthome/rooms";
         } else{
             return "redirect:/smarthome";
         }
 
+    }
+
+    @RequestMapping({"/smarthome/rooms"})
+    public String rooms(Model model){
+        if(this.selectedApartment==null){
+            return "redirect:/smarthome/smarthome";
+        }
+        this.roomModel = model;
+        model.addAttribute("RoomList", this.visualizerService.getApartment().getRoomService().getRoomsByApartment(this.selectedApartment));
+        return "smarthome/rooms";
     }
 }

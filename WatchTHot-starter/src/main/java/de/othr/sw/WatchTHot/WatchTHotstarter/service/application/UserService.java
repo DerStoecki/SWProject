@@ -169,7 +169,9 @@ public class UserService implements IUserService {
 
     @Override
     public List<User> getDummyUser(Apartment dummyApartment) {
-        this.dummyUser.forEach(user->{user.addApartment(dummyApartment); userRepository.save(user);});
+        this.dummyUser.forEach(user->{
+            user.addApartment(dummyApartment);
+            userRepository.save(user);});
         return this.dummyUser;
     }
 

@@ -28,6 +28,7 @@ public class MqttService implements IMqttService {
     public MqttService(IMqttClientService clientService, IMqttServerService serverService){
         this.clientService = clientService;
         this.serverService = serverService;
+        this.setTemperature(21.2f);
         this.task();
     }
 

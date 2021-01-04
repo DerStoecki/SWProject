@@ -56,11 +56,7 @@ public class VisualizerService implements IVisualizerService {
         return loggedInUser;
     }
 
-    //TODO MAKE IT FOR VISUALIZER --> BUTTON TO REGISTER USER SO YOU CAN'T ACCESS OTHERWISE...NORMALLY
 
-    //public boolean register(@RequestParam(value = "username", defaultValue = "User") String username,
-     //                       @RequestParam(value = "password", defaultValue = "Password") String password,
-     //                       @RequestParam(value = "privilege", defaultValue = "Read", required = false) String privilege) throws PrivilegeToLowException, NotLoggedInException, IOException, RegisterFailException {
     public boolean register(String username, String password, String privilege) throws PrivilegeToLowException, RegisterFailException, IOException, NotLoggedInException {
         if (this.loggedInUser != null) {
             Privilege privilegeToAllow = Privilege.valueOf(privilege.toUpperCase());

@@ -9,6 +9,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statist
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
+import de.othr.sw.WatchTHot.WatchTHotstarter.repository.ApartmentRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.RoomRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.TopicRepository;
@@ -55,6 +56,9 @@ public class RoomService implements IRoomService {
     }
 
     private void createDummyRooms() throws IOException {
+        if(roomRepository.getRoomsByApartmentId(Long.parseLong("1")).size() >= 5){
+            return;
+        }
         this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/childrenRoom.json"))));
         this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/kitchen.json"))));
         this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/livingRoom.json"))));

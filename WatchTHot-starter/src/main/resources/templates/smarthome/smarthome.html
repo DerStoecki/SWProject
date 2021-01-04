@@ -49,10 +49,10 @@
         <h1>Your Smarthome Visualization</h1>
         <p class="lead">Select your Apartment and watch your Rooms.</p>
             <form method="post" th:object="${ApartmentWrapper}" th:action="@{/submitApartment}" id = "submitApartments">
-        <div th:if="${ApartmentWrapper.getApartments().size()==0}">
-            <p>No Apartments Available</p>
-        </div>
-                <div>
+        <div th:switch="${ApartmentWrapper.getApartments().size()}">
+            <p th:case="0">No Apartments Available</p>
+
+                <div th:case="*">
             <th:block th:each="Apartment : ${ApartmentWrapper.getApartments()}">
                 <button class = "btn btn-primary" th:text="${Apartment.getId().toString()}"></button>
             </th:block>
@@ -67,6 +67,7 @@
                 <input type="text" id="inputUsername" class="form-control" placeholder="ApartmentId" th:field="${ApartmentWrapper.selectedId}" required autofocus>
                 <button class="w-100 btn btn-lg btn-primary" type="submit" id = "submit">Submit Apartment</button>
                 <p class="mt-5 mb-3 text-muted">&copy;2020-2021</p>
+        </div>
             </form>
         </div>
     </div>

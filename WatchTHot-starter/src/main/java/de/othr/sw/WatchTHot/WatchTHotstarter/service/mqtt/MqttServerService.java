@@ -67,15 +67,15 @@ public class MqttServerService implements IMqttServerService {
                     changesWereMade = true;
 
                 }
+                //client add Topic of simulated Data
                 if(client.addTopic(this.topicNameAndTopic.get(data.getTopic()))){
                     changesWereMade = true;
                 }
-
+            if(changesWereMade){
+                this.dataRepository.save(client);
                 Topic topic = topicRepository.getTopicByTopic(data.getTopic());
                 topic.setMqttClientData(client);
                 topicRepository.save(topic);
-            if(changesWereMade){
-                this.dataRepository.save(client);
             }
         });
 
