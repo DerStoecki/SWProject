@@ -1,0 +1,15 @@
+{
+  "topic": "Apartment0/Utility/Watermeter",
+  "name": "watermeter0",
+  "qos": 0,
+  "remain": true,
+  "clean": false,
+  "DeviceType": "Meter",
+  "Room":"Utility",
+  "Time": "",
+  "payload":
+  {"meterState": 1856.32}
+
+
+
+}

@@ -28,4 +28,8 @@ public interface IRoomService {
     void loadRooms(Apartment apartment);
 
     Map<Room, Map<MqttClientData, List<Payload>>> getLatestPayloads();
+
+    void setDummyData(Apartment dummyApartment);
+
+    List<Room> getRoomsByApartment(Apartment apartment);
 }

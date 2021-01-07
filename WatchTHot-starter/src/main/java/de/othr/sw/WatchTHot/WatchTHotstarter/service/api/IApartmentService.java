@@ -35,4 +35,8 @@ public interface IApartmentService {
     void setCurrentApartment(Apartment selectedApartment);
 
     boolean removeApartmentFromUser(Apartment apartment, User user);
+
+    void setDummyUsers(List<User> dummyUser);
+
+    Apartment getDummyApartment();
 }

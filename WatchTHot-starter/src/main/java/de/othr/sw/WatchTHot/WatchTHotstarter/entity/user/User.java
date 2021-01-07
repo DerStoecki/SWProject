@@ -3,8 +3,6 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.entity.user;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.rolemanagement.Salt;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -13,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -40,8 +39,8 @@ public class User {
     private String familyName;
     @Column(name = "PRIVILEGE")
     private Privilege privilege = Privilege.READ;
-
-
+    @Column(name = "SALT")
+    private final String salt = createSalt();
     //FROM STACK OVERFLOW https://stackoverflow.com/questions/18142745/how-do-i-generate-a-salt-in-java-for-salted-hash
     @Transient
     private static final Random RANDOM = new SecureRandom();
@@ -52,9 +51,9 @@ public class User {
 
 
     @ManyToMany
-    private List<Apartment> apartments;
-    @OneToOne
-    private Salt salt = createSalt();
+    private List<Apartment> apartments = new ArrayList<>();
+
+
 
 
     //CTOR
@@ -66,7 +65,7 @@ public class User {
     public User(String username, String pwd) throws IOException {
         this.username = username;
 
-        String pass = (pwd + this.salt.getSaltValue() + getPepper());
+        String pass = (pwd + this.salt + getPepper());
         //https://www.baeldung.com/sha-256-hashing-java
         this.pwd = Hashing.sha256().hashString(pass, StandardCharsets.UTF_8).toString();
         this.firstName = firstName;
@@ -76,14 +75,14 @@ public class User {
     private static String getPepper() throws IOException {
         //Copied from my Bachelor Coding in:
         // https://github.com/DerStoecki/openems/blob/feature/MQTT/io.openems.edge.bridge.mqtt/src/io/openems/edge/bridge/mqtt/component/AbstractMqttComponent.java
-        JsonObject jsonObject = new Gson().fromJson(new String(Files.readAllBytes(Paths.get("Pepper.json"))), JsonObject.class);
+        JsonObject jsonObject = new Gson().fromJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/entity/user/Pepper.json"))), JsonObject.class);
         return jsonObject.get("Pepper").getAsString();
     }
 
-    private static Salt createSalt() {
+    private static String createSalt() {
         byte[] salt = new byte[16];
         RANDOM.nextBytes(salt);
-        return new Salt(Arrays.toString(salt));
+        return Arrays.toString(salt);
     }
 
     public Long getId() {
@@ -110,7 +109,7 @@ public class User {
         return apartments;
     }
 
-    protected Salt getSalt() {
+    protected String getSalt() {
         return salt;
     }
 
@@ -132,9 +131,9 @@ public class User {
         this.pwd = Hashing.sha256().hashString(getHashedPwd(pwd), StandardCharsets.UTF_8).toString();
     }
     private String getHashedPwd(String password) throws IOException {
-        return (password + this.salt.getSaltValue() + getPepper());
+        return (password + this.salt + getPepper());
     }
-
+    @Transactional
     public void addApartment(Apartment apartment) {
         this.apartments.add(apartment);
     }
@@ -173,7 +172,7 @@ public class User {
     }
 
     public boolean passwordIdentical(String password) throws IOException {
-        return this.pwd.equals(getHashedPwd(password));
+        return this.pwd.equals(Hashing.sha256().hashString(getHashedPwd(password), StandardCharsets.UTF_8).toString());
     }
 
     public void removeApartment(Apartment apartment) {

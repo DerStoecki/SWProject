@@ -5,6 +5,7 @@ import org.joda.time.DateTimeZone;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,17 +20,25 @@ public class MqttClientData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="MQTT_CLIENT_ID")
     private Long id;
+    @Column(name = "DEVICE_NAME")
+    private String name;
     @Column(name="DEVICE_TYPE")
     private DeviceType deviceType;
     @ManyToOne
     private Room room;
-    @OneToMany(mappedBy="mqttClientData")
-    private List<Topic> topics;
-
+    @OneToMany(mappedBy="mqttClientData", cascade = CascadeType.ALL)
+    private List<Topic> topics = new ArrayList<>();
+    @Transient
     private static String format = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ";
+    @Transient
     private static DateTimeZone timeZone = DateTimeZone.UTC;
 
     public MqttClientData() {
+    }
+
+    public MqttClientData(String name, DeviceType deviceType) {
+        this.name = name;
+        this.deviceType = deviceType;
     }
 
     @Override
@@ -77,4 +86,14 @@ public class MqttClientData {
     public void setRoom(Room room) {
         this.room = room;
     }
+
+    @Transactional
+    public boolean addTopic(Topic topic){
+        if(!this.topics.contains(topic)){
+            this.topics.add(topic);
+            return true;
+        }
+        return false;
+    }
+
 }

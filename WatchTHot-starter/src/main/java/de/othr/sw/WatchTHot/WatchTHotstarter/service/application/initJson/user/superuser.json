@@ -1,0 +1,7 @@
+{
+  "username": "superuser",
+  "password": "password",
+  "firstName": "DummyDu",
+  "familyName": "DummyFamily",
+  "Privilege": "READWRITE"
+}

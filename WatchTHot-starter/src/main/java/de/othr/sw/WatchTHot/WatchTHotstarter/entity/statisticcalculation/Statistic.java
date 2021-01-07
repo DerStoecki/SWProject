@@ -3,6 +3,7 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
@@ -33,6 +34,38 @@ public class Statistic {
         this.room = room;
         this.timeStamp = time;
         this.identifier = identifier.name();
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public DateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void setTimeStamp(DateTime timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+    @Transactional
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom() {
+        return room;
     }
 
     @Override

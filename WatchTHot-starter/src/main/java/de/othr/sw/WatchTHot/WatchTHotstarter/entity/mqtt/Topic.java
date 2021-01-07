@@ -1,6 +1,9 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -16,12 +19,17 @@ public class Topic {
     private String topic;
     @ManyToOne
     private MqttClientData mqttClientData;
-    @OneToMany(mappedBy = "topic")
-    private List<Payload> payloads;
+    @OneToMany(mappedBy = "topic", cascade = {CascadeType.ALL})
+    private List<Payload> payloads = new ArrayList<>();
 
     @Transient
     private Payload mostRecentPayload;
 
+    public Topic(String topic) {
+        this.topic = topic;
+    }
+
+    public Topic(){}
 
     @Override
     public int hashCode() {
@@ -66,5 +74,19 @@ public class Topic {
      */
     public void setMostRecentPayload(Payload mostRecentPayload) {
         this.mostRecentPayload = mostRecentPayload;
+    }
+
+    @Transactional
+    public boolean addPayload(Payload payload){
+        if(!this.payloads.contains(payload)) {
+            this.payloads.add(payload);
+            return true;
+        }
+
+        return false;
+    }
+    @Transactional
+    public void setMqttClientData(MqttClientData mqttClientData) {
+        this.mqttClientData = mqttClientData;
     }
 }

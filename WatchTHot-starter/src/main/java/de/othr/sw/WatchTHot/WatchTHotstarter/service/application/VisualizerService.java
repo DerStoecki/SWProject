@@ -20,22 +20,25 @@ import java.util.Optional;
 @RestController
 public class VisualizerService implements IVisualizerService {
 
-    // TODO
-    // Get Statistic --> Parse Further --> VIA ApartmentService-->RoomService-->StatisticOfDevice
-    // Show DeviceData --> Get DeviceData --> EachRoom
-    @Autowired
     private final IUserService userService;
-    @Autowired
+
     private final IApartmentService apartmentService;
 
     private User loggedInUser;
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
 
+    @Autowired
     public VisualizerService(IUserService userService, IApartmentService apartmentService) {
         this.userService = userService;
         this.apartmentService = apartmentService;
+        setupDummyApartment();
     }
+
+    private void setupDummyApartment() {
+        this.apartmentService.setDummyUsers(this.userService.getDummyUser(this.apartmentService.getDummyApartment()));
+    }
+
 
     /**
      * Logs in the User; Fails if user either doesn't exist or pw is incorrect. If correct load Apartments with the logged in User.
@@ -44,20 +47,17 @@ public class VisualizerService implements IVisualizerService {
      * @param password usually via REST, password
      * @return empty if pwd incorrect or user cannot be found else returns User for this session.
      */
-    @GetMapping("/login")
-    public User login(@RequestParam(value = "username", defaultValue = "user") String username,
-                                @RequestParam(value = "password", defaultValue = "pwd") String password) throws LoginFailException, IOException {
+
+    //public User login(@RequestParam(value = "username", defaultValue = "user") String username,
+      //                          @RequestParam(value = "password", defaultValue = "pwd") String password) throws LoginFailException, IOException {
+    public User login(String username, String password) throws IOException, LoginFailException {
         this.loggedInUser = this.userService.login(username, password);
         this.apartmentList = this.apartmentService.getApartments(this.loggedInUser);
         return loggedInUser;
     }
 
-    //TODO MAKE IT FOR VISUALIZER --> BUTTON TO REGISTER USER SO YOU CAN'T ACCESS OTHERWISE...NORMALLY
-    @GetMapping("/register")
-    public boolean register(@RequestParam(value = "username", defaultValue = "User") String username,
-                            @RequestParam(value = "password", defaultValue = "Password") String password,
-                            @RequestParam(value = "privilege", defaultValue = "Read", required = false) String privilege) throws PrivilegeToLowException, NotLoggedInException, IOException, RegisterFailException {
 
+    public boolean register(String username, String password, String privilege) throws PrivilegeToLowException, RegisterFailException, IOException, NotLoggedInException {
         if (this.loggedInUser != null) {
             Privilege privilegeToAllow = Privilege.valueOf(privilege.toUpperCase());
             this.userService.registerDifferentUser(username, password, this.loggedInUser, privilegeToAllow);
@@ -69,8 +69,9 @@ public class VisualizerService implements IVisualizerService {
     }
 
 
-    @GetMapping("/changePassword")
-    public boolean changePassword(@RequestParam(value = "oldpassword") String oldPw, @RequestParam(value = "newPassword") String newPwd) throws NotLoggedInException, IOException, PasswordIncorrectException {
+
+    //public boolean changePassword(@RequestParam(value = "oldpassword") String oldPw, @RequestParam(value = "newPassword") String newPwd) throws NotLoggedInException, IOException, PasswordIncorrectException {
+    public boolean changePassword(String oldPw, String newPwd) throws IOException, PasswordIncorrectException, NotLoggedInException {
         if (this.loggedInUser != null) {
             this.userService.changePassword(oldPw, newPwd, loggedInUser);
             return true;
@@ -86,8 +87,9 @@ public class VisualizerService implements IVisualizerService {
      * @return true if it was successful
      */
 
-    @GetMapping("/selectApartment")
-    public boolean selectApartment(@RequestParam(value = "apartmentId") long id) {
+    //@GetMapping("/selectApartment")
+    //public boolean selectApartment(@RequestParam(value = "apartmentId") long id) {
+            public boolean selectApartment(long id){
         Optional<Apartment> apartmentToSelect = this.apartmentList.stream().filter(apartments -> apartments.getId().equals(id)).findFirst();
         if (apartmentToSelect.isPresent()) {
             this.selectedApartment = apartmentToSelect.get();
@@ -97,10 +99,10 @@ public class VisualizerService implements IVisualizerService {
         return false;
     }
 
-    @GetMapping("/getApartments")
+    //@GetMapping("/getApartments")
     public List<Apartment> getApartmentList() throws CannotDisplayApartmentsException {
         if(this.loggedInUser != null){
-            return this.apartmentList;
+            return this.loggedInUser.getApartments();
         }
         throw new CannotDisplayApartmentsException();
     }

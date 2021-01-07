@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.79.0">
+    <title>Smarthome ROOMS</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/grid/">
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link th:rel="stylesheet" th:href="@{/assets/bootstrap/css/bootstrap.min.css} "/>
+    <link th:rel="media" th:href="@{/assets/media/smarthome/}"/>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../static/assets/bootstrap/css/bootstrap.min.css" th:href="@{/assets/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="../../static/assets/smarthome/grid.css/" th:href="@{/assets/smarthome/grid.css}" rel="stylesheet">
+</head>
+<body class="py-4">
+
+<main>
+    <div class="container">
+
+        <h1>Your Room of your selected Apartment</h1>
+        <p class="lead">This is just a simulation at the moment</p>
+
+        <div class="row mb-3">
+            <div class="col-4 themed-grid-col">Room</div>
+            <div class="col-4 themed-grid-col">Temperature</div>
+            <div class="col-4 themed-grid-col">Remove room</div>
+        </div>
+        <div th:id="Rooms" th:object="${RoomList}">
+            <div th:switch = "${RoomList.size()}">
+                <div th:case="0">
+                    <p>No Rooms listet</p>
+                </div>
+                <div th:case="*">
+            <th:block th:each="room:${RoomList}">
+                <div class ="row mb-3" >
+                <div class="col-sm-4 themed-grid-col" th:value="${room.getRoomName()}"></div>
+                <div class="col-sm-4 themed-grid-col" th:id="${room.getId()}" th:value="${room.getData().get(0).getTopics().get(0).getMostRecentPayload()}"></div>
+                <div class="col-sm-4 themed-grid-col">
+                    <button type="button" class="btn btn-danger">Remove</button>
+                </div>
+                </div>
+            </th:block>
+            </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+</body>
+
+<script th:inline="jquery">
+    // TODO Add Clickable plus and minus icons for rooms (next to room)
+    // TODO Plus icon -> "ADD Room" "Register USER" etc
+    // TODO MINUS next to room
+    // TODO MINUS for deleting USER
+    // TODO SHOW Statistic
+    // TODO POST STATISTIC
+
+    function updateData(){
+        var roomlist = [[${RoomList.size()}]];
+        var rooms = [[${RoomList}]];
+        rooms.forEach(updateRoom())
+    }
+    function updateRoom(room){
+    }
+
+</script>
+
+<script th:src="@{js/jquery/jquery.min.js}"></script>
+<script th:src="@{js/popper.js/umd/popper.min.js}"></script>
+<script th:src="@{js/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{assets/bootstrap4-toggle/bootstrap4-toggle.min.js}"></script>
+</html>

@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ApartmentRepository extends CrudRepository<Apartment, Long> {
     List<Apartment> getApartmentsByUsers(User user);
+    Apartment getApartmentById(Long id);
 
 }
