@@ -38,4 +38,7 @@ public class WrapperApartment {
     }
 
 
+    public String getSelectedId() {
+        return this.selectedId;
+    }
 }
