@@ -9,6 +9,7 @@ import java.util.List;
 
 
 @Entity
+@Transactional
 @Table(name="TOPIC", schema = "swwatchthot" )
 @Access(AccessType.FIELD)
 public class Topic {

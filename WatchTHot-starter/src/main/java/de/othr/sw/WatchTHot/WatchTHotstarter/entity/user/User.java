@@ -135,7 +135,9 @@ public class User {
     }
     @Transactional
     public void addApartment(Apartment apartment) {
-        this.apartments.add(apartment);
+        if(!this.apartments.contains(apartment)) {
+            this.apartments.add(apartment);
+        }
     }
     @Transactional
     public void setUsername(String username) {

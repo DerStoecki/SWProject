@@ -13,10 +13,14 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PrivilegeToLowEx
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.RegisterFailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 
 import java.io.IOException;
@@ -111,9 +115,22 @@ public class WebVisualization {
         }
         this.roomModel = model;
 
+       roomLogic(model);
+
+        return "smarthome/rooms";
+    }
+
+    private void roomLogic(Model model) {
         List<Room> roomsOfApartment = this.visualizerService.getApartment().getRoomService().getRoomsByApartment(this.selectedApartment);
         filterRooms(roomsOfApartment);
         model.addAttribute("roomTemperatures", this.roomTemperature);
+
+        this.roomTemperature.forEach((key,value)->{
+            if(key.getRoomName().toUpperCase().equals("CHILDREN")) {
+                System.out.println(key.getRoomName());
+                value.forEach(data -> System.out.println(data.getTopics().get(0).getMostRecentPayload().getPayloadEntry()));
+            }
+        });
         model.addAttribute("roomMeter", this.roomMeter);
         model.addAttribute("thermostat", this.thermostat);
         if(this.entityUser.getPrivilege().getLevel()>=1){
@@ -124,8 +141,13 @@ public class WebVisualization {
         } else {
             model.addAttribute("privilege", false);
         }
+    }
 
-        return "smarthome/rooms";
+   // @Scheduled(cron = "*/10 * * * * *")
+    private void refreshEverything(){
+        if(this.roomModel!=null){
+            this.roomLogic(this.roomModel);
+        }
     }
 
     /**
@@ -161,14 +183,14 @@ public class WebVisualization {
         }
     }
 
-    @PostMapping({"/registerUser"})
+    @PostMapping({"/smarthome/registerUser"})
     public String registerNewUser(BoundaryUser user, Model model){
         if(this.entityUser==null){
             return "redirect:/";
         }
         if(user.getPassword().equals(user.getCheckPassword())) {
             try {
-                Optional<User> newRegisteredUser =this.visualizerService.getUserService().registerDifferentUser(user.getUsername(), user.getPassword(), this.entityUser, Privilege.valueOf(user.getPrivilege().toUpperCase()));
+                Optional<User> newRegisteredUser = this.visualizerService.getUserService().registerDifferentUser(user.getUsername(), user.getPassword(), this.entityUser, Privilege.valueOf(user.getPrivilege().toUpperCase()));
                 newRegisteredUser.ifPresent(value -> this.visualizerService.addApartmentUser(value, this.selectedApartment));
             } catch (RegisterFailException e) {
                 System.out.println("User with username" + user.getUsername() + " already exists");
@@ -183,6 +205,9 @@ public class WebVisualization {
 
     @PostMapping({"/logout"})
     public String logout(){
+        if(this.entityUser==null) {
+            return "redirect:/";
+        }
         this.clear();
         return "redirect:/";
     }
@@ -203,5 +228,13 @@ public class WebVisualization {
         }
         this.mqttService.setTemperature(Float.parseFloat(temperature.getTemp()));
         return "redirect:/smarthome/rooms";
+    }
+
+    @GetMapping(value = "smarthome/refreshApartmentData")
+    public String refresh(Model map){
+        if(this.entityUser==null){
+            return "redirect:/";
+        }
+        return rooms(map);
     }
 }

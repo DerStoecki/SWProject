@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -95,7 +96,14 @@ public class ApartmentService implements IApartmentService {
     @Override
     public List<Apartment> getApartments(User loggedInUser) {
         this.apartmentList = loggedInUser.getApartments();
-        return this.apartmentList;
+        List<Apartment> apartment= new ArrayList<>();
+        //unknown bug causes to add them twice to database
+        this.apartmentList.forEach(ap->{
+            if(!apartment.contains(ap)){
+                apartment.add(ap);
+            }
+        });
+        return apartment;
     }
 
     /**
@@ -142,7 +150,7 @@ public class ApartmentService implements IApartmentService {
     }
 
     @Override
-    public void setUser(User user, Apartment apartment){
+    public void addUser(User user, Apartment apartment){
         apartment.addUser(user);
         this.apartmentRepository.save(apartment);
     }

@@ -1,12 +1,14 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "PAYLOAD", schema = "swwatchthot")
 @Access(AccessType.FIELD)
+@Transactional
 public class Payload {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
