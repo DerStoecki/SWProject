@@ -12,12 +12,21 @@ import org.springframework.stereotype.Component;
 public class BoundaryUser {
     private String username;
     private String password;
-
+    private String privilege;
+    private String checkPassword;
     public String getUsername() {
         return this.username;
     }
 
     public String getPassword() {
         return password;
+    }
+
+    public String getPrivilege() {
+        return privilege;
+    }
+
+    public String getCheckPassword() {
+        return checkPassword;
     }
 }

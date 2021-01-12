@@ -74,6 +74,10 @@ public class MqttClientData {
         return Collections.unmodifiableList(this.topics);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public static String getFormat() {
         return format;
     }
