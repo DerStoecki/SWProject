@@ -142,6 +142,11 @@ public class ApartmentService implements IApartmentService {
     }
 
     @Override
+    public void setUser(User user, Apartment apartment){
+        apartment.addUser(user);
+        this.apartmentRepository.save(apartment);
+    }
+    @Override
     public Apartment getDummyApartment() {
         return this.dummyApartment;
     }

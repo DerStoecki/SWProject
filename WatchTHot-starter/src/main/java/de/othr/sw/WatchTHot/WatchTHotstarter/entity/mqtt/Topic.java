@@ -1,5 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -21,9 +22,6 @@ public class Topic {
     private MqttClientData mqttClientData;
     @OneToMany(mappedBy = "topic", cascade = {CascadeType.ALL})
     private List<Payload> payloads = new ArrayList<>();
-
-    @Transient
-    private Payload mostRecentPayload;
 
     public Topic(String topic) {
         this.topic = topic;
@@ -64,7 +62,23 @@ public class Topic {
         return payloads;
     }
 
+    @Transient
+    private Payload mostRecentPayload;
+
     public Payload getMostRecentPayload(){
+        if(this.mostRecentPayload==null){
+            this.getPayloads().forEach(payload -> {
+                if(this.mostRecentPayload == null){
+                    this.mostRecentPayload = payload;
+                } else {
+                    DateTime time = new DateTime(this.mostRecentPayload.getTimeStamp());
+                    DateTime payloadTime = new DateTime(payload.getTimeStamp());
+                    if(payloadTime.isAfter(time)){
+                        this.mostRecentPayload = payload;
+                    }
+                }
+            });
+        }
         return this.mostRecentPayload;
     }
 

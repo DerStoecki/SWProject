@@ -13,4 +13,6 @@ public interface IVisualizerService {
 
     boolean removeOwnApartment(Apartment apartment);
     User login(String username, String password) throws IOException, LoginFailException;
+
+    void addApartmentUser(User value, Apartment apartment);
 }

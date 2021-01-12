@@ -127,15 +127,16 @@ public class UserService implements IUserService {
      * @throws PrivilegeToLowException if the Privilege you want to give is greater than the priv. of current logged in User
      * @throws IOException if the pepper doesn't exist
      * @throws RegisterFailException if the username already exists.
+     * @return
      */
     @Override
     @Transactional
-    public void registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException {
+    public Optional<User> registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException {
         if (currentUser.getPrivilege().equals(Privilege.READ)) {
             throw new PrivilegeToLowException();
         } else {
             if (currentUser.getPrivilege().allowedToGivePrivilege(privilegeToAllow)) {
-                this.register(name, pwd, privilegeToAllow);
+                return this.register(name, pwd, privilegeToAllow);
             } else {
                 throw new PrivilegeToLowException();
             }
@@ -173,6 +174,12 @@ public class UserService implements IUserService {
             user.addApartment(dummyApartment);
             userRepository.save(user);});
         return this.dummyUser;
+    }
+
+    @Override
+    public void addApartmentToUser(User user, Apartment apartment){
+        user.addApartment(apartment);
+        userRepository.save(user);
     }
 
     /**

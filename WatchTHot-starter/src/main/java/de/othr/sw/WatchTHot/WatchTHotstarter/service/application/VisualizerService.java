@@ -56,6 +56,12 @@ public class VisualizerService implements IVisualizerService {
         return loggedInUser;
     }
 
+    @Override
+    public void addApartmentUser(User user, Apartment apartment) {
+        this.userService.addApartmentToUser(user,apartment);
+        this.apartmentService.setUser(user, apartment);
+    }
+
 
     public boolean register(String username, String password, String privilege) throws PrivilegeToLowException, RegisterFailException, IOException, NotLoggedInException {
         if (this.loggedInUser != null) {

@@ -118,7 +118,7 @@ public class WebVisualization {
         model.addAttribute("thermostat", this.thermostat);
         if(this.entityUser.getPrivilege().getLevel()>=1){
             model.addAttribute("privilege", true);
-            model.addAttribute("temperature", 21.d);
+            model.addAttribute("temperature", new BoundaryTempertaure());
             model.addAttribute("newUser", new BoundaryUser());
             model.addAttribute("passwordMatch", false);
         } else {
@@ -162,13 +162,14 @@ public class WebVisualization {
     }
 
     @PostMapping({"/registerUser"})
-    public String registerNewUser(BoundaryUser user, boolean matchingPw, Model model){
+    public String registerNewUser(BoundaryUser user, Model model){
         if(this.entityUser==null){
             return "redirect:/";
         }
-        if(matchingPw) {
+        if(user.getPassword().equals(user.getCheckPassword())) {
             try {
-                this.visualizerService.getUserService().registerDifferentUser(user.getUsername(), user.getPassword(), this.entityUser, Privilege.valueOf(user.getPrivilege().toUpperCase()));
+                Optional<User> newRegisteredUser =this.visualizerService.getUserService().registerDifferentUser(user.getUsername(), user.getPassword(), this.entityUser, Privilege.valueOf(user.getPrivilege().toUpperCase()));
+                newRegisteredUser.ifPresent(value -> this.visualizerService.addApartmentUser(value, this.selectedApartment));
             } catch (RegisterFailException e) {
                 System.out.println("User with username" + user.getUsername() + " already exists");
             } catch (IOException e) {
@@ -196,11 +197,11 @@ public class WebVisualization {
     }
 
     @PostMapping({"/setTemperature"})
-    public String setTemperature(float temperature){
+    public String setTemperature(BoundaryTempertaure temperature){
         if(this.entityUser == null){
             return "redirect:/";
         }
-        this.mqttService.setTemperature(temperature);
+        this.mqttService.setTemperature(Float.parseFloat(temperature.getTemp()));
         return "redirect:/smarthome/rooms";
     }
 }

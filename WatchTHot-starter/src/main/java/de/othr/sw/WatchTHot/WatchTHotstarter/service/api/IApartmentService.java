@@ -38,5 +38,7 @@ public interface IApartmentService {
 
     void setDummyUsers(List<User> dummyUser);
 
+    void setUser(User user, Apartment apartment);
+
     Apartment getDummyApartment();
 }

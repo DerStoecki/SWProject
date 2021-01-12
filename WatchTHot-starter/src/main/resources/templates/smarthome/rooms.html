@@ -53,7 +53,7 @@
                 </div>
                     <th:block data-th-each="client:${room.getValue()}">
                         <div class="col-sm-4 themed-grid-col" th:id="${room.getKey().getId()}">
-                            <td th:utext="${client.getTopics().get(0).getMostRecentPayload()}"></td>
+                            <td th:utext="${client.getTopics().get(0).getMostRecentPayload().getPayloadEntry()}"></td>
                         </div>
                     </th:block>
                 <div class="col-sm-4 themed-grid-col">
@@ -66,8 +66,6 @@
         </div>
     <div class="row mb-3">
         <div class="col-4 themed-grid-col">Room</div>
-        <div class="col-4 themed-grid-col">MeterData</div>
-        <div class="col-4 themed-grid-col">Remove room</div>
     </div>
 
         <div th:id ="RoomMeter" th:object="${roomMeter}">
@@ -76,53 +74,65 @@
                     <p>No Rooms listet.</p>
                 </div>
                 <div th:case="*">
+
                     <th:block data-th-each="room:${roomMeter}">
                         <div class ="row mb-3">
                             <div class="col-sm-4 themed-grid-col" th:id = "${room.getKey().getId()}">
                                 <td th:utext="${room.getKey().getRoomName()}"></td>
                             </div>
+
+                        <div class ="row mb-2">
+                            <div class="col-2 themed-grid-col">Meter Name</div>
+                            <div class="col-2 themed-grid-col">Meter Data</div>
+                        </div>
                             <th:block th:each="data:${room.getValue()}">
-                                <div class ="col-sm-4 themed-grid-col">
+                                <div class ="row mb-2">
+                                <div class ="col-sm-2 themed-grid-col">
                                     <td th:text="${data.getName()}"></td>
                                 </div>
-                                <div class ="col-sm-4 themed-grid-col">
-                                    <td th:text="${data.getTopics().get(0).getMostRecentPayload()}"></td>
+                                <div class ="col-sm-2 themed-grid-col">
+                                    <td th:text="${data.getTopics().get(0).getMostRecentPayload().getPayloadEntry()}"></td>
+                                </div>
                                 </div>
                             </th:block>
                         </div>
                     </th:block>
-
+                </div>
                 </div>
 
             </div>
         </div>
 <div th:id = "Thermostat" th:object="${thermostat}">
-     <div class = "row mb-2">
-         <div class = "col mb-2" th:id = "${thermostat.getName()}" th:text="${thermostat.getName()}"></div>
-         <div class = "col mb-2" th:text = "${thermostat.getTopics().get(0).getMostRecentPayload()}"></div>
+     <div class = "row mb-4">
+         <div class = "col mb-4"></div>
+         <div class = "col mb-4 themed-grid-col" th:id = "${thermostat.getName()}" th:text="${thermostat.getName()}"></div>
+         <div class = "col mb-4 themed-grid-col" th:text = "${thermostat.getTopics().get(0).getMostRecentPayload().getPayloadEntry()}"></div>
+         <div class = "col mb-4"></div>
     </div>
 </div>
 
        <div th:if="${privilege}">
             <form method="post" th:object="${temperature}" th:action="@{/setTemperature}" id = "submitThermostat">
                 <p class="mt-5 mb-3 text-muted">Thermostat Value</p>
-                <label for="temperature" class="visually-hidden">ThermostatValue</label>
-                <input type="text" id="temperature" class="form-control" placeholder="Temperature" th:field="${temperature}" required>
+                <label for="temperatureDiv" class="visually-hidden">ThermostatValue</label>
+                <input type="text" id="temperatureDiv" class="form-control" placeholder="Temperature" th:field="*{temp}" required>
             <button class="w-40 btn btn-lg btn-primary" type="submit" id = "submitTemperature">Submit Temperature</button>
             </form>
            <div><p class="mt-5 mb-3 text-muted"></p></div>
            <form method="post" th:action="@{/registerUser}" th:object="${newUser}" id = "registerNewUser">
-               <label for="inputUsername" class="visually-hidden">Username</label>
-               <input type="text" id="inputUsername" class="form-control" placeholder="username" th:field="${newUser.username}" required>
+               <label for="newUser" class="visually-hidden">Username</label>
+               <input type="text" id="newUser" class="form-control" placeholder="username" th:field="${newUser.username}" required>
                <label for="inputPassword" class="visually-hidden">Password</label>
                <input type="password" id="inputPassword" class="form-control" placeholder="Password" th:field="${newUser.password}" required>
                <label for="checkPassword" class="visually-hidden">Password</label>
                <input type="password" id="checkPassword" class="form-control" placeholder="repeat Password" th:field="${newUser.checkPassword}" required>
+               <label for="privilegeEntry" class="visually-hidden">Password</label>
+               <input type="text" id="privilegeEntry" class="form-control" placeholder=" READ, READWRITE, READWRITESUPER" th:field="${newUser.privilege}" required>
                <button class="w-40 btn btn-lg btn-primary" type="submit" id = "submit">Register New User</button>
            </form>
         </div>
         <div><p class="mt-5 mb-3 text-muted"></p></div>
-    <div th:id = "logoutDiv">
+    <div th:id = "logoutDiv" class="col text-center">
         <form method="post" th:action="@{/logout}" id="logout">
             <button class="w-40 btn btn-lg btn-danger" type="submit" id = "logoutButton">Logout</button>
         </form>
@@ -133,22 +143,10 @@
 
 
 </body>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script th:src="@{js/jquery/jquery.min.js}"></script>
-<script>
-    (function worker() {
-        $.ajax({
-            url: 'rooms.html',
-            success: function(data) {
-                $('.result').html(data);
-            },
-            complete: function() {
-                // Schedule the next request when the current one's complete
-                setTimeout(worker, 1000);
-            }
-        });
-    })();
-</script>
+
 
 
 <script th:src="@{js/popper.js/umd/popper.min.js}"></script>

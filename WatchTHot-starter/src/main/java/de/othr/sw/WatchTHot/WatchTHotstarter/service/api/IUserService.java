@@ -18,7 +18,7 @@ public interface IUserService {
     User login(String username, String password) throws LoginFailException, IOException;
     Optional<User> register(String name, String pwd, Privilege privilegeToGive) throws IOException, RegisterFailException;
 
-    void registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException;
+    Optional<User> registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException;
 
     @Transactional
     void changePassword(String oldPw, String newPwd, User user) throws IOException, PasswordIncorrectException;
@@ -26,6 +26,8 @@ public interface IUserService {
     void saveUserChanges(User user);
 
     List<User> getDummyUser(Apartment dummyApartment);
+
+    void addApartmentToUser(User user, Apartment apartment);
 
     UserRepository getUserRepository();
 }
