@@ -101,7 +101,7 @@ public class Topic {
         return false;
     }
     @Transactional
-    public void setMqttClientData(MqttClientData mqttClientData) {
+    public void setMqttClienspringtData(MqttClientData mqttClientData) {
         this.mqttClientData = mqttClientData;
     }
 }

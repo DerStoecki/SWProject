@@ -1,10 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.boundary.visualization;
 
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.DeviceType;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
@@ -13,14 +10,11 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PrivilegeToLowEx
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.RegisterFailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 
 import java.io.IOException;
@@ -41,12 +35,7 @@ public class WebVisualization {
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
     private Model roomModel;
-    //temperatures
-    private Map<Room, List<MqttClientData>> roomTemperature = new HashMap<>();
-    //meter
-    private Map<Room, List<MqttClientData>> roomMeter = new HashMap<>();
-    //Thermostat
-    private MqttClientData thermostat;
+
 
 
     @Autowired
@@ -95,14 +84,17 @@ public class WebVisualization {
 
     @PostMapping({"/submitApartment"})
     public String submitApartment(WrapperApartment apartmentWrapper, Model model){
+        if(this.entityUser == null){
+            return "redirect:/";
+        }
         Optional<Apartment> selectedApartment = this.apartmentList.stream().filter(apartment->apartment.getId().equals(Long.valueOf(apartmentWrapper.getSelectedId()))).findFirst();
         if(selectedApartment.isPresent()){
             this.selectedApartment = selectedApartment.get();
-            return "redirect:/smarthome/rooms";
-        } else{
-            return "redirect:/smarthome";
+            if(this.visualizerService.selectApartment(this.selectedApartment.getId())){
+                return "redirect:/smarthome/rooms";
+            }
         }
-
+        return "redirect:/smarthome";
     }
 
     @RequestMapping({"/smarthome/rooms"})
@@ -121,18 +113,10 @@ public class WebVisualization {
     }
 
     private void roomLogic(Model model) {
-        List<Room> roomsOfApartment = this.visualizerService.getApartment().getRoomService().getRoomsByApartment(this.selectedApartment);
-        filterRooms(roomsOfApartment);
-        model.addAttribute("roomTemperatures", this.roomTemperature);
-
-        this.roomTemperature.forEach((key,value)->{
-            if(key.getRoomName().toUpperCase().equals("CHILDREN")) {
-                System.out.println(key.getRoomName());
-                value.forEach(data -> System.out.println(data.getTopics().get(0).getMostRecentPayload().getPayloadEntry()));
-            }
-        });
-        model.addAttribute("roomMeter", this.roomMeter);
-        model.addAttribute("thermostat", this.thermostat);
+       this.visualizerService.filterRooms();
+        model.addAttribute("roomTemperatures", this.visualizerService.getRoomTemperature());
+        model.addAttribute("roomMeter", this.visualizerService.getRoomMeter());
+        model.addAttribute("thermostat", this.visualizerService.getThermostat());
         if(this.entityUser.getPrivilege().getLevel()>=1){
             model.addAttribute("privilege", true);
             model.addAttribute("temperature", new BoundaryTempertaure());
@@ -147,39 +131,6 @@ public class WebVisualization {
     private void refreshEverything(){
         if(this.roomModel!=null){
             this.roomLogic(this.roomModel);
-        }
-    }
-
-    /**
-     * Filter the rooms --> ClientData .---> DeviceTypes
-     * @param roomsOfApartment roomList usually from Apartment --> visualizerService
-     */
-    private void filterRooms(List<Room> roomsOfApartment) {
-        roomsOfApartment.forEach(room->{
-            room.getData().forEach(data-> {
-                if(data.getDeviceType().equals(DeviceType.TEMPERATURE_SENSOR)){
-                        addMap(this.roomTemperature, room, data);
-                    }
-                else if(data.getDeviceType().equals(DeviceType.METER)){
-                    addMap(this.roomMeter, room, data);
-                }
-                else if(data.getDeviceType().equals(DeviceType.THERMOSTAT)){
-                    this.thermostat = data;
-                }
-            });
-        });
-    }
-
-    private void addMap(Map<Room, List<MqttClientData>> map, Room room, MqttClientData clientData){
-
-        if(map.containsKey(room)){
-            if(!map.get(room).contains(clientData)){
-                map.get(room).add(clientData);
-            }
-        } else {
-            List<MqttClientData> clientDataList = new ArrayList<>();
-            clientDataList.add(clientData);
-            map.put(room, clientDataList);
         }
     }
 
@@ -216,9 +167,7 @@ public class WebVisualization {
         this.apartmentList.clear();
         this.entityUser = null;
         this.selectedApartment = null;
-        this.thermostat = null;
-        this.roomTemperature.clear();
-        this.roomMeter.clear();
+        this.visualizerService.clear();
     }
 
     @PostMapping({"/setTemperature"})

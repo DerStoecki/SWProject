@@ -63,7 +63,6 @@ public class MqttServerService implements IMqttServerService {
                     //SET room for client and update room;
                     client.setRoom(room.get());
                     room.get().addData(client);
-                    roomRepository.save(room.get());
                     changesWereMade = true;
 
                 }
@@ -75,7 +74,6 @@ public class MqttServerService implements IMqttServerService {
                 this.dataRepository.save(client);
                 Topic topic = topicRepository.getTopicByTopic(data.getTopic());
                 topic.setMqttClientData(client);
-                topicRepository.save(topic);
             }
         });
 

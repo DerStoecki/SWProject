@@ -136,7 +136,6 @@ public class ApartmentService implements IApartmentService {
                     apartmentToRemove.removeUser(user);
                 });
             }
-            this.apartmentRepository.save(apartment);
         });
         return apartmentOption.isPresent();
     }
@@ -145,14 +144,11 @@ public class ApartmentService implements IApartmentService {
     public void setDummyUsers(List<User> dummyUser) {
         dummyUser.forEach(user ->
                 this.dummyApartment.addUser(user));
-        this.apartmentRepository.save(dummyApartment);
-
     }
 
     @Override
     public void addUser(User user, Apartment apartment){
         apartment.addUser(user);
-        this.apartmentRepository.save(apartment);
     }
     @Override
     public Apartment getDummyApartment() {

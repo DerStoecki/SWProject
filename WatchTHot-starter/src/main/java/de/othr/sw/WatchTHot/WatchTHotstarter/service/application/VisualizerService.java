@@ -1,8 +1,12 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
 
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.DeviceType;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
+import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IApartmentService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IUserService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
@@ -12,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class VisualizerService implements IVisualizerService {
@@ -22,9 +25,13 @@ public class VisualizerService implements IVisualizerService {
 
     private final IApartmentService apartmentService;
 
+
     private User loggedInUser;
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
+    private Map<Room, List<MqttClientData>> roomTemperatureMap = new HashMap<>();
+    private Map<Room, List<MqttClientData>> roomMeterMap = new HashMap<>();
+    private MqttClientData thermostat;
 
     @Autowired
     public VisualizerService(IUserService userService, IApartmentService apartmentService) {
@@ -60,6 +67,58 @@ public class VisualizerService implements IVisualizerService {
         this.apartmentService.addUser(user, apartment);
     }
 
+    @Override
+    public void filterRooms() {
+        this.selectedApartment.getRooms().forEach(room->{
+            room.getData().forEach(data-> {
+                if(data.getDeviceType().equals(DeviceType.TEMPERATURE_SENSOR)){
+                    addMap(this.roomTemperatureMap, room, data);
+                }
+                else if(data.getDeviceType().equals(DeviceType.METER)){
+                    addMap(this.roomMeterMap, room, data);
+                }
+                else if(data.getDeviceType().equals(DeviceType.THERMOSTAT)){
+                    this.thermostat = data;
+                }
+            });
+        });
+    }
+    private void addMap(Map<Room, List<MqttClientData>> map, Room room, MqttClientData clientData){
+        this
+        if(map.containsKey(room)){
+            if(!map.get(room).contains(clientData)){
+                map.get(room).add(clientData);
+            }
+        } else {
+            List<MqttClientData> clientDataList = new ArrayList<>();
+            clientDataList.add(clientData);
+            map.put(room, clientDataList);
+        }
+    }
+    @Override
+    public Map<Room, List<MqttClientData>> getRoomTemperature() {
+        return this.roomTemperatureMap;
+    }
+
+    @Override
+    public Map<Room, List<MqttClientData>> getRoomMeter() {
+        return this.roomMeterMap;
+    }
+
+    @Override
+    public MqttClientData getThermostat() {
+        return this.thermostat;
+    }
+
+    @Override
+    public void clear() {
+        this.thermostat = null;
+        this.roomTemperatureMap.clear();
+        this.roomMeterMap.clear();
+        this.selectedApartment  = null;
+        this.loggedInUser = null;
+    }
+
 
     public boolean register(String username, String password, String privilege) throws PrivilegeToLowException, RegisterFailException, IOException, NotLoggedInException {
         if (this.loggedInUser != null) {
@@ -67,7 +126,7 @@ public class VisualizerService implements IVisualizerService {
             this.userService.registerDifferentUser(username, password, this.loggedInUser, privilegeToAllow);
             return true;
         } else {
-            //TODO redirect to Login!
+            //usually redirect to Login in webvisualization
             throw new NotLoggedInException();
         }
     }
@@ -93,11 +152,10 @@ public class VisualizerService implements IVisualizerService {
 
     //@GetMapping("/selectApartment")
     //public boolean selectApartment(@RequestParam(value = "apartmentId") long id) {
-            public boolean selectApartment(long id){
+    public boolean selectApartment(long id){
         Optional<Apartment> apartmentToSelect = this.apartmentList.stream().filter(apartments -> apartments.getId().equals(id)).findFirst();
         if (apartmentToSelect.isPresent()) {
             this.selectedApartment = apartmentToSelect.get();
-            this.apartmentService.setCurrentApartment(this.selectedApartment);
             return true;
         }
         return false;
@@ -129,7 +187,6 @@ public class VisualizerService implements IVisualizerService {
      * @return true if successful; false if privilege not high enough or Apartment cannot be found
      */
     @Override
-    @Transactional
     public boolean removeOfDifferentUserApartment(User user, Apartment apartment) {
         if(this.loggedInUser.getPrivilege().getLevel() >= Privilege.READWRITESUPER.getLevel()){
             if(this.apartmentService.removeApartmentFromUser(apartment, user)) {

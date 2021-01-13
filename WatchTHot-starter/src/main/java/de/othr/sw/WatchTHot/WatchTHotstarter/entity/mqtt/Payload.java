@@ -14,7 +14,7 @@ public class Payload {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PAYLOAD_ID")
     private Long id;
-    @ManyToOne()
+    @ManyToOne
     private Topic topic;
 
 

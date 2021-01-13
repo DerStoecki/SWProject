@@ -38,7 +38,11 @@ public class MqttService implements IMqttService {
      */
     @Override
     public boolean setTemperature(float newTemperatureValue) {
-        return this.clientService.setTemperature(newTemperatureValue);
+        if( this.clientService.setTemperature(newTemperatureValue)){
+            this.task();
+            return true;
+        }
+        return false;
     }
 
 

@@ -106,7 +106,8 @@ public class MqttClientService implements IMqttClientService {
                     }
                     //Decrease Temperature with 0.5 °C tolerance
                     else if(this.setPointTemperature + 0.5 < sensor.getPayload().get("temperature").getAsFloat()){
-                        sensor.getPayload().addProperty("temperature", randomTemperature(false,sensor.getPayload().get("temperature").getAsFloat()));
+                        float temperatureRandom = randomTemperature(false,sensor.getPayload().get("temperature").getAsFloat());
+                        sensor.getPayload().addProperty("temperature", temperatureRandom);
                     }
                     sensor.setTimeNow();
 
