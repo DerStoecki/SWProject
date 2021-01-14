@@ -36,7 +36,6 @@
         <div class="row mb-3">
             <div class="col-4 themed-grid-col">Room</div>
             <div class="col-4 themed-grid-col">Temperature</div>
-            <div class="col-4 themed-grid-col">Remove room</div>
         </div>
         <div th:id="RoomTemperatures" th:object="${roomTemperatures}">
             <div th:switch = "${roomTemperatures.size()}">
@@ -56,9 +55,6 @@
                             <td th:utext="${client.getTopics().get(0).getMostRecentPayload().getPayloadEntry()}"></td>
                         </div>
                     </th:block>
-                <div class="col-sm-4 themed-grid-col">
-                    <button type="button" class="btn-secondary">update</button>
-                </div>
                 </div>
             </th:block>
             </div>

@@ -92,7 +92,6 @@ public class VisualizerService implements IVisualizerService {
         } else {
             List<MqttClientData> clientDataList = new ArrayList<>();
             clientDataList.add(clientData);
-            Payload payload = clientData.getTopics().get(0).getMostRecentPayload();
             map.put(room, clientDataList);
         }
     }
