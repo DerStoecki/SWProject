@@ -62,28 +62,26 @@ public class Apartment {
         Apartment otherApartment = (Apartment) obj;
         return this.id.equals(otherApartment.id);
     }
-    @Transactional
     public void addUser(User user){
         if(!this.users.contains(user)){
             this.users.add(user);
         }
     }
-    @Transactional
+
     public void removeUser(User user){
         this.users.remove(user);
     }
-    @Transactional
+
     public void addRoom(Room room){
         if(!this.rooms.contains(room)){
             this.rooms.add(room);
         }
     }
-    @Transactional
+
     public void removeRoom(Room room){
         this.rooms.remove(room);
     }
 
-    @Transactional
     public void setAddress(Address address){
         this.address = address;
     }

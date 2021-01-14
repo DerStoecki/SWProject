@@ -162,24 +162,20 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
-    @Transactional
-    public void saveUserChanges(User user) {
-        this.userRepository.save(user);
-    }
 
     @Override
+    @Transactional
     public List<User> getDummyUser(Apartment dummyApartment) {
         this.dummyUser.forEach(user->{
             user.addApartment(dummyApartment);
-            userRepository.save(user);});
+           });
         return this.dummyUser;
     }
 
     @Override
+    @Transactional
     public void addApartmentToUser(User user, Apartment apartment){
         user.addApartment(apartment);
-        userRepository.save(user);
     }
 
     /**

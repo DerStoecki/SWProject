@@ -8,7 +8,6 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.LoginFailExcepti
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PasswordIncorrectException;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PrivilegeToLowException;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.RegisterFailException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,10 +19,8 @@ public interface IUserService {
 
     Optional<User> registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException;
 
-    @Transactional
+
     void changePassword(String oldPw, String newPwd, User user) throws IOException, PasswordIncorrectException;
-    @Transactional
-    void saveUserChanges(User user);
 
     List<User> getDummyUser(Apartment dummyApartment);
 

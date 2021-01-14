@@ -124,7 +124,7 @@ public class User {
     public String getPwd() {
         return pwd;
     }
-    @Transactional
+
     public void setPwd(String pwd) throws IOException {
         createSalt();
         //https://www.baeldung.com/sha-256-hashing-java
@@ -133,21 +133,21 @@ public class User {
     private String getHashedPwd(String password) throws IOException {
         return (password + this.salt + getPepper());
     }
-    @Transactional
+
     public void addApartment(Apartment apartment) {
         if(!this.apartments.contains(apartment)) {
             this.apartments.add(apartment);
         }
     }
-    @Transactional
+
     public void setUsername(String username) {
         this.username = username;
     }
-    @Transactional
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    @Transactional
+
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
     }

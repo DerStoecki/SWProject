@@ -32,4 +32,6 @@ public interface IRoomService {
     void setDummyData(Apartment dummyApartment);
 
     List<Room> getRoomsByApartment(Apartment apartment);
+
+    MqttClientData getClientById(Long id);
 }

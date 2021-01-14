@@ -2,11 +2,11 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.DeviceType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Payload;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
-import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IApartmentService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IUserService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
@@ -84,7 +84,7 @@ public class VisualizerService implements IVisualizerService {
         });
     }
     private void addMap(Map<Room, List<MqttClientData>> map, Room room, MqttClientData clientData){
-        this
+
         if(map.containsKey(room)){
             if(!map.get(room).contains(clientData)){
                 map.get(room).add(clientData);
@@ -92,6 +92,7 @@ public class VisualizerService implements IVisualizerService {
         } else {
             List<MqttClientData> clientDataList = new ArrayList<>();
             clientDataList.add(clientData);
+            Payload payload = clientData.getTopics().get(0).getMostRecentPayload();
             map.put(room, clientDataList);
         }
     }
@@ -112,9 +113,7 @@ public class VisualizerService implements IVisualizerService {
 
     @Override
     public void clear() {
-        this.thermostat = null;
-        this.roomTemperatureMap.clear();
-        this.roomMeterMap.clear();
+       this.clearData();
         this.selectedApartment  = null;
         this.loggedInUser = null;
     }
@@ -161,6 +160,21 @@ public class VisualizerService implements IVisualizerService {
         return false;
     }
 
+    @Override
+    public void clearData() {
+        this.thermostat = null;
+        this.roomTemperatureMap.clear();
+        this.roomMeterMap.clear();
+    }
+
+    @Override
+    public void updateData() {
+        this.clearData();
+        this.selectedApartment = this.apartmentService.getApartmentById(this.selectedApartment.getId());
+       // this.apartmentService.setCurrentApartment(this.selectedApartment);
+        this.filterRooms();
+    }
+
     //@GetMapping("/getApartments")
     public List<Apartment> getApartmentList() throws CannotDisplayApartmentsException {
         if(this.loggedInUser != null){
@@ -187,12 +201,10 @@ public class VisualizerService implements IVisualizerService {
      * @return true if successful; false if privilege not high enough or Apartment cannot be found
      */
     @Override
+    @Transactional
     public boolean removeOfDifferentUserApartment(User user, Apartment apartment) {
         if(this.loggedInUser.getPrivilege().getLevel() >= Privilege.READWRITESUPER.getLevel()){
-            if(this.apartmentService.removeApartmentFromUser(apartment, user)) {
-                this.userService.saveUserChanges(user);
-                return true;
-            }
+            return this.apartmentService.removeApartmentFromUser(apartment, user);
         }
         return false;
     }
@@ -205,11 +217,7 @@ public class VisualizerService implements IVisualizerService {
     @Override
     @Transactional
     public boolean removeOwnApartment(Apartment apartment) {
-        if(this.apartmentService.removeApartmentFromUser(apartment, this.loggedInUser)){
-            this.userService.saveUserChanges(this.loggedInUser);
-            return true;
-        }
-        return false;
+        return this.apartmentService.removeApartmentFromUser(apartment, this.loggedInUser);
     }
 
 

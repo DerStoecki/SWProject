@@ -10,11 +10,10 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PrivilegeToLowEx
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.RegisterFailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.io.IOException;
@@ -113,7 +112,7 @@ public class WebVisualization {
     }
 
     private void roomLogic(Model model) {
-       this.visualizerService.filterRooms();
+       this.visualizerService.updateData();
         model.addAttribute("roomTemperatures", this.visualizerService.getRoomTemperature());
         model.addAttribute("roomMeter", this.visualizerService.getRoomMeter());
         model.addAttribute("thermostat", this.visualizerService.getThermostat());
@@ -151,7 +150,7 @@ public class WebVisualization {
                 System.out.println("Privilege to Low; Can't grand access to User: " + user.getUsername() + " the Privilege: " + Privilege.valueOf(user.getPrivilege().toUpperCase()));
             }
         }
-        return "redirect:/smarthome/rooms";
+        return rooms(model);
     }
 
     @PostMapping({"/logout"})
@@ -170,20 +169,21 @@ public class WebVisualization {
         this.visualizerService.clear();
     }
 
-    @PostMapping({"/setTemperature"})
+   @PostMapping({"/setTemperature"})
     public String setTemperature(BoundaryTempertaure temperature){
         if(this.entityUser == null){
             return "redirect:/";
         }
-        this.mqttService.setTemperature(Float.parseFloat(temperature.getTemp()));
-        return "redirect:/smarthome/rooms";
+       this.mqttService.setTemperature(Float.parseFloat(temperature.getTemp()));
+       return "redirect:/smarthome/rooms";
     }
 
-    @GetMapping(value = "smarthome/refreshApartmentData")
+    @GetMapping({"/smarthome/refreshApartmentData"})
     public String refresh(Model map){
-        if(this.entityUser==null){
-            return "redirect:/";
+        if(this.entityUser!=null){
+            this.roomLogic(map);
+            return "redirect:/smarthome/rooms";
         }
-        return rooms(map);
+        return "redirect:/";
     }
 }

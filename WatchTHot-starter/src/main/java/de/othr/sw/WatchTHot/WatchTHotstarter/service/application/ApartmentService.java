@@ -35,7 +35,7 @@ public class ApartmentService implements IApartmentService {
     private List<Apartment> apartmentList;
     private Apartment currentApartment;
     @Autowired
-            public ApartmentService(ApartmentRepository apartmentRepository, IRoomService roomService,
+    public ApartmentService(ApartmentRepository apartmentRepository, IRoomService roomService,
                                     AddressRepository addressRepository) throws IOException {
         this.apartmentRepository = apartmentRepository;
         this.roomService = roomService;
@@ -153,6 +153,11 @@ public class ApartmentService implements IApartmentService {
     @Override
     public Apartment getDummyApartment() {
         return this.dummyApartment;
+    }
+
+    @Override
+    public Apartment getApartmentById(Long id) {
+        return this.apartmentRepository.getApartmentById(id);
     }
 
 }

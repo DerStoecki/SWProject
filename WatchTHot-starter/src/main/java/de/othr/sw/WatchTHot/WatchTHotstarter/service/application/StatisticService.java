@@ -35,7 +35,7 @@ public class StatisticService implements IStatisticService {
 
     @Override
     public void loadRooms(List<Room> roomList) {
-            roomList.forEach(room -> {
+          /*  roomList.forEach(room -> {
                 //Clientdata is clientdata, doesn't matter which topic
                 if(room.getStatistics().isEmpty() && !room.getData().isEmpty()){
                     Statistic statistic = new Statistic(StatisticIdentifier.HOUR, room,
@@ -43,7 +43,7 @@ public class StatisticService implements IStatisticService {
                     room.addStatistic(statistic);
                     this.statisticRepository.save(statistic);
                 }
-            });
+            });*/
     }
     //TODO CALCULATION
     //Help from https://riptutorial.com/spring/example/21209/cron-expression <-- Examples

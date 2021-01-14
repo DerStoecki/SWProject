@@ -8,7 +8,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "PAYLOAD", schema = "swwatchthot")
 @Access(AccessType.FIELD)
-@Transactional
 public class Payload {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

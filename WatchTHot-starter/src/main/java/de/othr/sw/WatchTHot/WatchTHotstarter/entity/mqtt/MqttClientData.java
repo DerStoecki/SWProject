@@ -86,12 +86,10 @@ public class MqttClientData {
         return timeZone;
     }
 
-    @Transactional
     public void setRoom(Room room) {
         this.room = room;
     }
 
-    @Transactional
     public boolean addTopic(Topic topic){
         if(!this.topics.contains(topic)){
             this.topics.add(topic);

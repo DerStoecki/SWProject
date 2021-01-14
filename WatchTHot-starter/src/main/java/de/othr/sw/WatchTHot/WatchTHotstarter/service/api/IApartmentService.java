@@ -41,4 +41,6 @@ public interface IApartmentService {
     void addUser(User user, Apartment apartment);
 
     Apartment getDummyApartment();
+
+    Apartment getApartmentById(Long id);
 }

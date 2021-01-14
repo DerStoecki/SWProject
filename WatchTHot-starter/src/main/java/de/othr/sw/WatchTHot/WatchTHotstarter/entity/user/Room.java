@@ -81,31 +81,28 @@ public class Room {
         return Collections.unmodifiableList(this.statistics);
     }
 
-    @Transactional
+
     public void addStatistic(Statistic statistic) {
         if (!this.getStatistics().contains(statistic)) {
             this.statistics.add(statistic);
         }
     }
 
-    @Transactional
+
     public void addData(MqttClientData data) {
         if (!this.data.contains(data)) {
             this.data.add(data);
         }
     }
 
-    @Transactional
     public void setApartment(Apartment apartment){
         this.apartment = apartment;
     }
 
-    @Transactional
     public void removeStatistic(Statistic statistic) {
         this.statistics.remove(statistic);
     }
 
-    @Transactional
     public void removeData(MqttClientData data){
         this.data.remove(data);
     }

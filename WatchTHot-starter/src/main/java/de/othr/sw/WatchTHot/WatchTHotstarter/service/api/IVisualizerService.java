@@ -36,4 +36,8 @@ public interface IVisualizerService {
     void clear();
 
     boolean selectApartment(long id);
+
+    void clearData();
+
+    void updateData();
 }

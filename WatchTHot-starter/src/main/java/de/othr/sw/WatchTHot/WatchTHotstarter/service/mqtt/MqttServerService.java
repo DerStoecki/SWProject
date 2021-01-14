@@ -8,6 +8,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.*;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttServerService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -40,6 +41,7 @@ public class MqttServerService implements IMqttServerService {
      * @param dataSimulations the simulated Data.
      */
     @Override
+    @Transactional
     public void publishTopicAndPayload(List<MqttClientSimulation> dataSimulations) {
         addNewTopics(dataSimulations);
         createNewPayloads(dataSimulations);
@@ -85,7 +87,7 @@ public class MqttServerService implements IMqttServerService {
      * @param dataSimulations dataFromClientService
      *
      */
-    private void createNewPayloads(List<MqttClientSimulation> dataSimulations) {
+    public void createNewPayloads(List<MqttClientSimulation> dataSimulations) {
         dataSimulations.forEach(dataSimulation->{
                 Topic topic = this.topicNameAndTopic.get(dataSimulation.getTopic());
                 String key = "";
@@ -94,14 +96,10 @@ public class MqttServerService implements IMqttServerService {
                 } else if(dataSimulation.getPayload().has("meterState")){
                     key = "meterState";
                 }
-
                 if(!key.equals("")){
                     Payload payload = new Payload(topic, dataSimulation.getPayload().get(key).getAsString(), dataSimulation.getTime());
                     payloadRepository.save(payload);
-                    if(topic.addPayload(payload)) {
-                        topic.setMostRecentPayload(payload);
-                        topicRepository.save(topic);
-                    }
+                    topic.addPayload(payload);
 
                 }
             });

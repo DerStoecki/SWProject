@@ -63,35 +63,10 @@ public class Topic {
         return payloads;
     }
 
-    @Transient
-    private Payload mostRecentPayload;
-
     public Payload getMostRecentPayload(){
-        if(this.mostRecentPayload==null){
-            this.getPayloads().forEach(payload -> {
-                if(this.mostRecentPayload == null){
-                    this.mostRecentPayload = payload;
-                } else {
-                    DateTime time = new DateTime(this.mostRecentPayload.getTimeStamp());
-                    DateTime payloadTime = new DateTime(payload.getTimeStamp());
-                    if(payloadTime.isAfter(time)){
-                        this.mostRecentPayload = payload;
-                    }
-                }
-            });
-        }
-        return this.mostRecentPayload;
+       return this.getPayloads().get(this.getPayloads().size()-1);
     }
 
-    /**
-     * Usually called by MQTT SERVER SERVICE!!!! (UPDATES PAYLOAD)
-     * @param mostRecentPayload
-     */
-    public void setMostRecentPayload(Payload mostRecentPayload) {
-        this.mostRecentPayload = mostRecentPayload;
-    }
-
-    @Transactional
     public boolean addPayload(Payload payload){
         if(!this.payloads.contains(payload)) {
             this.payloads.add(payload);
@@ -100,8 +75,10 @@ public class Topic {
 
         return false;
     }
-    @Transactional
-    public void setMqttClienspringtData(MqttClientData mqttClientData) {
+
+    public void setMqttClientData(MqttClientData mqttClientData) {
         this.mqttClientData = mqttClientData;
     }
+
+
 }

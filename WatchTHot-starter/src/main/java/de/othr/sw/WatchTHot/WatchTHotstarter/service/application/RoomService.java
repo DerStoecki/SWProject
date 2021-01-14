@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +42,7 @@ public class RoomService implements IRoomService {
     private List<Room> roomList;
     private List<Room> dummyRooms = new ArrayList<>();
 
-    private Map<MqttClientData, List<Topic>> clientDatatopicMap = new ConcurrentHashMap<>();
+    private Map<MqttClientData, List<Topic>> clientDatatopicMap = new HashMap<>();
 
     private final IStatisticService statisticService;
 
@@ -122,5 +123,10 @@ public class RoomService implements IRoomService {
     @Override
     public List<Room> getRoomsByApartment(Apartment apartment) {
        return this.roomRepository.getRoomsByApartment(apartment);
+    }
+
+    @Override
+    public MqttClientData getClientById(Long id) {
+        return this.mqttClientDataRepository.getMqttClientDataById(id);
     }
 }

@@ -8,4 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface MqttClientDataRepository extends CrudRepository<MqttClientData, Long> {
     MqttClientData getMqttClientDataByDeviceTypeAndRoom(DeviceType deviceType, Room room);
     MqttClientData getMqttClientDataByName(String name);
+    MqttClientData getMqttClientDataById(Long id);
 }
