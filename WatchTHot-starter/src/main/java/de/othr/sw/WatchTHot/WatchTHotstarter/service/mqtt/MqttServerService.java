@@ -100,7 +100,6 @@ public class MqttServerService implements IMqttServerService {
                     Payload payload = new Payload(topic, dataSimulation.getPayload().get(key).getAsString(), dataSimulation.getTime());
                     payloadRepository.save(payload);
                     topic.addPayload(payload);
-
                 }
             });
     }

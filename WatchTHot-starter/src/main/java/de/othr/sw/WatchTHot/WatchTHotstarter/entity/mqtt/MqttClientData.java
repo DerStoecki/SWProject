@@ -1,5 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import org.joda.time.DateTimeZone;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,9 @@ public class MqttClientData {
     private Room room;
     @OneToMany(mappedBy="mqttClientData", cascade = CascadeType.ALL)
     private List<Topic> topics = new ArrayList<>();
+    @OneToMany(mappedBy = "client")
+    private List<Statistic> statistics = new ArrayList<>();
+
     @Transient
     private static String format = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ";
     @Transient
@@ -96,6 +100,18 @@ public class MqttClientData {
             return true;
         }
         return false;
+    }
+
+    public List<Statistic> getStatistics() {
+        return Collections.unmodifiableList(this.statistics);
+    }
+    public void addStatistic(Statistic statistic) {
+        if (!this.getStatistics().contains(statistic)) {
+            this.statistics.add(statistic);
+        }
+    }
+    public void removeStatistic(Statistic statistic) {
+        this.statistics.remove(statistic);
     }
 
 }

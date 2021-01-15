@@ -27,8 +27,6 @@ public class Room {
     private List<MqttClientData> data = new ArrayList<>();
     @ManyToOne
     private Apartment apartment;
-    @OneToMany(mappedBy = "room")
-    private List<Statistic> statistics = new ArrayList<>();
 
     public Room (String roomName, int floor){
         this.roomName = roomName;
@@ -77,18 +75,6 @@ public class Room {
         return apartment;
     }
 
-    public List<Statistic> getStatistics() {
-        return Collections.unmodifiableList(this.statistics);
-    }
-
-
-    public void addStatistic(Statistic statistic) {
-        if (!this.getStatistics().contains(statistic)) {
-            this.statistics.add(statistic);
-        }
-    }
-
-
     public void addData(MqttClientData data) {
         if (!this.data.contains(data)) {
             this.data.add(data);
@@ -97,10 +83,6 @@ public class Room {
 
     public void setApartment(Apartment apartment){
         this.apartment = apartment;
-    }
-
-    public void removeStatistic(Statistic statistic) {
-        this.statistics.remove(statistic);
     }
 
     public void removeData(MqttClientData data){

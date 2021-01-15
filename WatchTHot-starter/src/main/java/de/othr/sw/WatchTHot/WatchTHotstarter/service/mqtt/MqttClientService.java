@@ -132,9 +132,9 @@ public class MqttClientService implements IMqttClientService {
     }
 
     /**
-     * Increase every Hour MeterConsumption
+     * Increase every 10 min MeterConsumption
      */
-    @Scheduled (cron = "* * */1 * * *")
+    @Scheduled (cron = "* */10 * * * *")
     private void changeMeterConsumption(){
         AtomicInteger currentConsumption = new AtomicInteger(0);
     this.dataSimulations.stream().filter(client->!client.getDeviceType().equals(DeviceType.METER)).forEach(nonMeter->{
@@ -142,6 +142,9 @@ public class MqttClientService implements IMqttClientService {
     });
     this.dataSimulations.stream().filter(client->client.getDeviceType().equals(DeviceType.METER)).forEach(meter->{
         meter.setConsumption(meter.getConsumption() + currentConsumption.get());
+        if(meter.getPayload().has("meterState")){
+            meter.getPayload().addProperty("meterState", meter.getConsumption());
+        }
         meter.setTimeNow();
     });
 

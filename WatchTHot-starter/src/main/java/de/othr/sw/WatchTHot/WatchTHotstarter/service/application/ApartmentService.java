@@ -114,7 +114,6 @@ public class ApartmentService implements IApartmentService {
     @Override
     public void setCurrentApartment(Apartment selectedApartment) {
         this.currentApartment = selectedApartment;
-        this.roomService.loadRooms(this.currentApartment);
     }
 
     /**

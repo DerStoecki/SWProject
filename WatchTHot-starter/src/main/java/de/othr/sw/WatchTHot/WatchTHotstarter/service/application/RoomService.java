@@ -2,6 +2,7 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.DeviceType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Payload;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Topic;
@@ -9,13 +10,13 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statist
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
-import de.othr.sw.WatchTHot.WatchTHotstarter.repository.ApartmentRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.RoomRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.TopicRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IRoomService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IStatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService implements IRoomService {
@@ -37,7 +38,7 @@ public class RoomService implements IRoomService {
 
     private final TopicRepository topicRepository;
 
-    private Map<Room, List<MqttClientData>> roomClientDataMap = new ConcurrentHashMap<>();
+    private Map<Room, List<MqttClientData>> roomClientDataMap = new HashMap<>();
 
     private List<Room> roomList;
     private List<Room> dummyRooms = new ArrayList<>();
@@ -87,13 +88,12 @@ public class RoomService implements IRoomService {
             this.roomClientDataMap.put(room,room.getData());
             room.getData().forEach(clientData -> this.clientDatatopicMap.put(clientData, clientData.getTopics()));
         });
-        this.statisticService.loadRooms(this.roomList);
     }
 
     @Override
     public Map<Room, Map<MqttClientData, List<Payload>>> getLatestPayloads(){
-        Map<MqttClientData,List<Payload>> clientDataPayloadMap = new ConcurrentHashMap<>();
-        Map<Room, Map<MqttClientData, List<Payload>>> roomDataMap = new ConcurrentHashMap<>();
+        Map<MqttClientData,List<Payload>> clientDataPayloadMap = new HashMap<>();
+        Map<Room, Map<MqttClientData, List<Payload>>> roomDataMap = new HashMap<>();
         List<Payload> mostRecentPayloads = new ArrayList<>();
         //Each room
         this.roomClientDataMap.forEach((room,clientData) ->{
@@ -128,5 +128,22 @@ public class RoomService implements IRoomService {
     @Override
     public MqttClientData getClientById(Long id) {
         return this.mqttClientDataRepository.getMqttClientDataById(id);
+    }
+
+    @Override
+    public IStatisticService getStatisticService() {
+        return this.statisticService;
+    }
+
+    /**
+     * Update ALL ROOMS every 59 minutes
+     */
+    @Scheduled(cron = "0 59 * * * *")
+    private void updateStatistic(){
+        List<Room> rooms = (List<Room>) (this.roomRepository.findAll());
+               List<MqttClientData> clientsForStatistic = new ArrayList<>();
+               rooms.forEach(room->clientsForStatistic.addAll(room.getData().stream()
+                       .filter(client->client.getDeviceType().equals(DeviceType.METER)).collect(Collectors.toList())));
+        this.statisticService.loadRoomData(clientsForStatistic);
     }
 }

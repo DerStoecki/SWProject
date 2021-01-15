@@ -1,9 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation;
 
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
@@ -19,53 +17,67 @@ public class Statistic {
     @Column(name="STATISTIC_ID")
     private Long id;
     @Column(name = "DATA")
-    private String data;
+    private float data;
     @Column(name = "TIMESTAMP")
-    private DateTime timeStamp;
+    private String timeStamp;
     //DAILY/MONTHLY/WEEKLY/ETC ETC
     @Column(name = "IDENTIFIER")
     private String identifier;
+    @Column(name="CONSUMPTION_PERCENT")
+    private float consumptionPercent;
+    @Column(name="CONSUMPTION_PERCENT_DIFFERENCE")
+    private float consumptionPercentDifference;
     @ManyToOne
-    private Room room;
+    private MqttClientData client;
 
 
-    public Statistic(StatisticIdentifier identifier, Room room, DateTime time, String data){
+    public Statistic(StatisticIdentifier identifier, MqttClientData client, DateTime time, float data, float consumptionPercent, float consumptionPercentDifference){
         this.data = data;
-        this.room = room;
-        this.timeStamp = time;
+        this.client = client;
+        this.timeStamp = time.toString();
         this.identifier = identifier.name();
+        this.consumptionPercent = consumptionPercent;
+        this.consumptionPercentDifference = consumptionPercentDifference;
     }
 
-    public String getData() {
+    public Statistic() {
+
+    }
+
+    public float getData() {
         return data;
     }
 
     public DateTime getTimeStamp() {
-        return timeStamp;
+        return DateTime.parse(timeStamp);
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public StatisticIdentifier getIdentifier() {
+        return StatisticIdentifier.valueOf(this.identifier);
     }
 
-    public void setData(String data) {
+    public void setData(float data) {
         this.data = data;
     }
 
     public void setTimeStamp(DateTime timeStamp) {
-        this.timeStamp = timeStamp;
+        this.timeStamp = timeStamp.toString();
     }
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-    @Transactional
-    public void setRoom(Room room) {
-        this.room = room;
+
+    public MqttClientData getClient() {
+        return this.client;
     }
 
-    public Room getRoom() {
-        return room;
+    public Long getId() {
+        return id;
+    }
+
+    public float getConsumptionPercent() {
+        return consumptionPercent;
     }
 
     @Override

@@ -170,11 +170,10 @@ public class VisualizerService implements IVisualizerService {
     public void updateData() {
         this.clearData();
         this.selectedApartment = this.apartmentService.getApartmentById(this.selectedApartment.getId());
-       // this.apartmentService.setCurrentApartment(this.selectedApartment);
+        this.apartmentService.setCurrentApartment(this.selectedApartment);
         this.filterRooms();
     }
 
-    //@GetMapping("/getApartments")
     public List<Apartment> getApartmentList() throws CannotDisplayApartmentsException {
         if(this.loggedInUser != null){
             return this.loggedInUser.getApartments();

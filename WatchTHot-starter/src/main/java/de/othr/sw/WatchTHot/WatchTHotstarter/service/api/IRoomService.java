@@ -34,4 +34,6 @@ public interface IRoomService {
     List<Room> getRoomsByApartment(Apartment apartment);
 
     MqttClientData getClientById(Long id);
+
+    IStatisticService getStatisticService();
 }

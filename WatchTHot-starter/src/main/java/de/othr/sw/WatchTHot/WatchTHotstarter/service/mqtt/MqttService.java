@@ -14,9 +14,13 @@ import org.springframework.stereotype.Service;
  * and then subscribes to all topics who r needed by the Application.
  * Furthermore a user should be able to "add" topics to subscription list, which is in this case /
  * under these circumstances not possible
- * thats why i simulate by: these things
+ * that's why i simulate by: these things
  * clientService will create Dummy data and send them to the serverService, the serverService will save the
- * Data in the Database and the other services (Visulizer service etc etc) will be able to load data.
+ * Data in the Database and the other services (Visualizer service etc etc) will be able to load data.
+ *
+ * MqttClient can be found in my GithubRepo here:
+ * https://github.com/DerStoecki/openems/tree/feature/MQTT/io.openems.edge.bridge.mqtt/src/io/openems/edge/bridge/mqtt
+ *
  */
 
 @Service
