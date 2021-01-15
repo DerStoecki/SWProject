@@ -6,8 +6,8 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.DeviceType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Payload;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Topic;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
@@ -58,7 +58,7 @@ public class RoomService implements IRoomService {
     }
 
     private void createDummyRooms() throws IOException {
-        if(roomRepository.getRoomsByApartmentId(Long.parseLong("1")).size() >= 5){
+        if(((List<Room>)roomRepository.findAll()).size() >= 5){
             return;
         }
         this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/childrenRoom.json"))));
@@ -77,8 +77,8 @@ public class RoomService implements IRoomService {
 
 
     @Override
-    public String getStatistic(StatisticType type, String time, Room room, StatisticIdentifier identifier) {
-        return this.statisticService.getStatistic(type, time, room, identifier);
+    public Statistic getStatistic(String time, MqttClientData clientData, StatisticIdentifier identifier) {
+        return this.statisticService.getStatistic(time, clientData, identifier);
     }
 
     @Override

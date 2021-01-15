@@ -5,8 +5,6 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Topic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticType;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.MqttClientDataRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.repository.StatisticRepository;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IStatisticService;
@@ -38,7 +36,18 @@ public class StatisticService implements IStatisticService {
     }
 
     @Override
-    public String getStatistic(StatisticType type, String time, Room room, StatisticIdentifier identifier) {
+    public Statistic getStatistic(String time, MqttClientData clientData, StatisticIdentifier identifier) {
+        MqttClientData freshClient = this.clientDataRepository.getMqttClientDataById(clientData.getId());
+        List<Statistic> clientStatistics = freshClient.getStatistics();
+        if(clientStatistics.isEmpty()){
+            if(clientData.getTopics().size()>0){
+                String payloadEntry = clientData.getTopics().get(0).getMostRecentPayload().getPayloadEntry();
+                Statistic statistic = new Statistic(identifier, clientData, DateTime.now(),
+                        Float.parseFloat(payloadEntry), 0,0);
+                standardEmptyRoutine(clientData, payloadEntry, identifier);
+                return statistic;
+            }
+        }
         return null;
     }
 
@@ -51,21 +60,22 @@ public class StatisticService implements IStatisticService {
     public void loadRoomData(List<MqttClientData> clientList) {
         this.currentClients.clear();
         this.currentClients = clientList;
+
     }
     //TODO CALCULATION
     //Help from https://riptutorial.com/spring/example/21209/cron-expression <-- Examples
     @Scheduled(cron = "0 0 * * * *")
     public void calculateHourlyMeterStatistic(){
             this.currentClients.forEach(clientData -> {
-                List<Statistic> dailyStatistic = getStatisticByIdentifier(clientData, StatisticIdentifier.HOUR);
+                List<Statistic> hourStatistic = getStatisticByIdentifier(clientData, StatisticIdentifier.HOUR);
                 List<Topic> topics = clientData.getTopics();
                 if(topics.size()>0){
                     String payloadEntry =  topics.get(0).getMostRecentPayload().getPayloadEntry();
-                    if(dailyStatistic.isEmpty()){
+                    if(hourStatistic.isEmpty()){
                         standardEmptyRoutine(clientData, payloadEntry, StatisticIdentifier.HOUR);
                     }
                     else {
-                        Statistic newestStatistic = dailyStatistic.get(dailyStatistic.size()-1);
+                        Statistic newestStatistic = hourStatistic.get(hourStatistic.size()-1);
                         standardRoutine(clientData, payloadEntry, newestStatistic, StatisticIdentifier.HOUR);
                     }
                 }
@@ -93,15 +103,15 @@ public class StatisticService implements IStatisticService {
     @Scheduled(cron = "59 59 23 * * SUN")
     public void calculateMeterWeekly(){
         this.currentClients.forEach(clientData -> {
-            List<Statistic> dailyStatistic = getStatisticByIdentifier(clientData, StatisticIdentifier.WEEK);
+            List<Statistic> weeklyStatistic = getStatisticByIdentifier(clientData, StatisticIdentifier.WEEK);
             List<Topic> topics = clientData.getTopics();
             if(topics.size()>0){
                 String payloadEntry =  topics.get(0).getMostRecentPayload().getPayloadEntry();
-                if(dailyStatistic.isEmpty()){
+                if(weeklyStatistic.isEmpty()){
                     standardEmptyRoutine(clientData, payloadEntry, StatisticIdentifier.WEEK);
                 }
                 else {
-                    Statistic newestStatistic = dailyStatistic.get(dailyStatistic.size()-1);
+                    Statistic newestStatistic = weeklyStatistic.get(weeklyStatistic.size()-1);
                     standardRoutine(clientData, payloadEntry, newestStatistic, StatisticIdentifier.WEEK);
                 }
             }
@@ -112,15 +122,15 @@ public class StatisticService implements IStatisticService {
     @Scheduled(cron = "0 0 0 1 * ")
     public void calculateMeterMonthly(){
         this.currentClients.forEach(clientData -> {
-            List<Statistic> dailyStatistic = getStatisticByIdentifier(clientData, StatisticIdentifier.MONTH);
+            List<Statistic> monthStatistic = getStatisticByIdentifier(clientData, StatisticIdentifier.MONTH);
             List<Topic> topics = clientData.getTopics();
             if(topics.size()>0){
                 String payloadEntry =  topics.get(0).getMostRecentPayload().getPayloadEntry();
-                if(dailyStatistic.isEmpty()){
+                if(monthStatistic.isEmpty()){
                     standardEmptyRoutine(clientData, payloadEntry, StatisticIdentifier.MONTH);
                 }
                 else {
-                    Statistic newestStatistic = dailyStatistic.get(dailyStatistic.size()-1);
+                    Statistic newestStatistic = monthStatistic.get(monthStatistic.size()-1);
                     standardRoutine(clientData, payloadEntry, newestStatistic, StatisticIdentifier.MONTH);
                 }
             }

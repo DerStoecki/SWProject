@@ -40,7 +40,6 @@ public class ApartmentService implements IApartmentService {
         this.apartmentRepository = apartmentRepository;
         this.roomService = roomService;
         this.addressRepository = addressRepository;
-
         createDummyApartment();
     }
 
