@@ -96,7 +96,6 @@ public class UserService implements IUserService {
      * @throws RegisterFailException if the user by username already exists!
      */
     @Override
-    @Transactional
     public Optional<User> register(String username, String password, Privilege privilegeToGive) throws IOException, RegisterFailException {
         AtomicReference<Boolean> foundUser = new AtomicReference<>(false);
         this.userRepository.findAll().forEach(user -> {
@@ -131,7 +130,6 @@ public class UserService implements IUserService {
      * @return
      */
     @Override
-    @Transactional
     public Optional<User> registerDifferentUser(String name, String pwd, User currentUser, Privilege privilegeToAllow) throws PrivilegeToLowException, IOException, RegisterFailException {
         if (currentUser.getPrivilege().equals(Privilege.READ)) {
             throw new PrivilegeToLowException();

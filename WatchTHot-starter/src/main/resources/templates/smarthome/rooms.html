@@ -196,7 +196,7 @@
             <button class="w-40 btn btn-lg btn-primary" type="submit" id = "submitTemperature">Submit Temperature</button>
             </form>
            <div><p class="mt-5 mb-3 text-muted"></p></div>
-           <form method="post" th:action="@{/registerUser}" th:object="${newUser}" id = "registerNewUser">
+           <form method="post" th:action="@{/smarthome/registerUser}" th:object="${newUser}" id = "registerNewUser">
                <label for="newUser" class="visually-hidden">Username</label>
                <input type="text" id="newUser" class="form-control" placeholder="username" th:field="${newUser.username}" required>
                <label for="inputPassword" class="visually-hidden">Password</label>
