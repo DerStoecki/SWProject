@@ -43,8 +43,8 @@ public class PictureContributorService implements IPictureContributorService {
             for(String line : stringJoiner.toString().split("\n")) {
                 graphics.drawString(line, statisticImage.getWidth() / 4, height += graphics.getFontMetrics().getHeight());
             }
-            //DEBUG
             ImageIO.write(statisticImage, "png", new File(imagePath+"newPicture.png"));
+            //https://www.baeldung.com/java-base64-image-string
             byte[] fileContent = FileUtils.readFileToByteArray(new File(imagePath+"newPicture.png"));
             //Encoded String for Retrogram
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
