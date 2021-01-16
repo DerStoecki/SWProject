@@ -1,6 +1,8 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.service.api;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
@@ -43,4 +45,8 @@ public interface IVisualizerService {
 
     Map<Room, List<MqttClientData>>  getRoomTemperatureForVisualizer();
     Map<Room, List<MqttClientData>> getRoomMeterForVisualizer();
+
+    Statistic getStatisticFromId(Long id);
+
+    Statistic getMostRecentStatisticFromClient(MqttClientData meter, StatisticIdentifier identifier);
 }

@@ -1,11 +1,16 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.boundary.visualization;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttService;
+import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IPictureContributorService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
+import de.othr.sw.WatchTHot.WatchTHotstarter.service.application.PictureContributorService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.LoginFailException;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PrivilegeToLowException;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.RegisterFailException;
@@ -35,6 +40,8 @@ public class WebVisualization {
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
     private Model roomModel;
+    private IPictureContributorService contributorService = new PictureContributorService();
+    private List<MqttClientData> clientMeter;
 
 
 
@@ -114,7 +121,6 @@ public class WebVisualization {
 
     private void roomLogic(Model model) {
        this.visualizerService.updateData();
-
         model.addAttribute("roomTemperatures", this.visualizerService.getRoomTemperatureForVisualizer());
         model.addAttribute("roomMeter", this.visualizerService.getRoomMeterForVisualizer());
         model.addAttribute("thermostat", this.visualizerService.getThermostat());
@@ -123,6 +129,7 @@ public class WebVisualization {
                     meter.addAll(value.stream().filter(data->data.getYearlyStatistic().size()>0).collect(Collectors.toList()));
                 });
         model.addAttribute("allMeter", meter);
+        this.clientMeter = meter;
         if(this.entityUser.getPrivilege().getLevel()>=1){
             model.addAttribute("privilege", true);
             model.addAttribute("temperature", new BoundaryTempertaure());
@@ -147,7 +154,8 @@ public class WebVisualization {
         }
         if(user.getPassword().equals(user.getCheckPassword())) {
             try {
-                Optional<User> newRegisteredUser = this.visualizerService.getUserService().registerDifferentUser(user.getUsername(), user.getPassword(), this.entityUser, Privilege.valueOf(user.getPrivilege().toUpperCase()));
+                Optional<User> newRegisteredUser = this.visualizerService.getUserService().registerDifferentUser(user.getUsername(),
+                        user.getPassword(), this.entityUser, Privilege.valueOf(user.getPrivilege().toUpperCase()));
                 newRegisteredUser.ifPresent(value -> this.visualizerService.addApartmentUser(value, this.selectedApartment));
             } catch (RegisterFailException e) {
                 System.out.println("User with username" + user.getUsername() + " already exists");
@@ -174,6 +182,7 @@ public class WebVisualization {
         this.entityUser = null;
         this.selectedApartment = null;
         this.visualizerService.clear();
+        this.clientMeter.clear();
     }
 
    @PostMapping({"/setTemperature"})
@@ -198,6 +207,7 @@ public class WebVisualization {
         if(this.entityUser == null){
             return "redirect:/";
         }else {
+            this.postStatistic(StatisticIdentifier.DAY);
             System.out.println("worked");
             return "redirect:/smarthome/rooms";
         }
@@ -207,6 +217,7 @@ public class WebVisualization {
         if(this.entityUser == null){
             return "redirect:/";
         }else {
+            this.postStatistic(StatisticIdentifier.WEEK);
             System.out.println("worked");
             return "redirect:/smarthome/rooms";
         }
@@ -216,6 +227,7 @@ public class WebVisualization {
         if(this.entityUser == null){
             return "redirect:/";
         }else {
+            this.postStatistic(StatisticIdentifier.MONTH);
             System.out.println("worked");
             return "redirect:/smarthome/rooms";
         }
@@ -225,8 +237,18 @@ public class WebVisualization {
         if(this.entityUser == null){
             return "redirect:/";
         }else {
+            this.postStatistic(StatisticIdentifier.YEAR);
             System.out.println("worked");
             return "redirect:/smarthome/rooms";
         }
+    }
+
+    private void postStatistic(StatisticIdentifier identifier){
+
+        List<Statistic> filteredStatistic = new ArrayList<>();
+        this.clientMeter.forEach(meter->{
+            filteredStatistic.add(this.visualizerService.getMostRecentStatisticFromClient(meter, identifier));
+        });
+        this.contributorService.sendStatistic(identifier, filteredStatistic);
     }
 }

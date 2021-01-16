@@ -2,6 +2,8 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.DeviceType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
@@ -202,6 +204,41 @@ public class VisualizerService implements IVisualizerService {
     @Override
     public Map<Room, List<MqttClientData>> getRoomMeterForVisualizer() {
        return this.visualizerLogic(this.roomMeterMap);
+    }
+
+    @Override
+    public Statistic getStatisticFromId(Long id) {
+        return this.apartmentService.getRoomService().getStatisticService().getStatisticFromId(id);
+    }
+
+    /**
+     * MapReduce from : https://stackoverflow.com/questions/8360785/java-get-last-element-of-a-collection from Samad Charania
+     * @param meter the current client
+     * @param identifier the identifier
+     * @return the Last Statistic Entry
+     */
+    @Override
+    public Statistic getMostRecentStatisticFromClient(MqttClientData meter, StatisticIdentifier identifier) {
+        Statistic statisticToGet = null;
+        switch (identifier){
+            case HOUR -> {
+                statisticToGet = meter.getHourlyStatistic().stream().reduce((prev, next) -> next).orElse(null);
+            }
+            case DAY -> {
+                statisticToGet = meter.getDailyStatistic().stream().reduce((prev, next) -> next).orElse(null);
+            }
+            case WEEK -> {
+                statisticToGet = meter.getWeeklyStatistic().stream().reduce((prev,next)->next).orElseGet(null);
+            }
+            case MONTH -> {
+                statisticToGet = meter.getMonthlyStatistic().stream().reduce((prev, next) -> next).orElse(null);
+            }
+
+            case YEAR -> {
+                statisticToGet = meter.getYearlyStatistic().stream().reduce((prev, next) -> next).orElse(null);
+            }
+        }
+        return statisticToGet;
     }
 
     public List<Apartment> getApartmentList() throws CannotDisplayApartmentsException {

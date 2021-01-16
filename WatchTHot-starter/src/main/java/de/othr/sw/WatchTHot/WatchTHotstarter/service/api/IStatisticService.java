@@ -12,4 +12,6 @@ public interface IStatisticService {
     void loadRoomData(List<MqttClientData> roomList);
 
     void calculateInitStatistic(MqttClientData data);
+
+    Statistic getStatisticFromId(Long id);
 }

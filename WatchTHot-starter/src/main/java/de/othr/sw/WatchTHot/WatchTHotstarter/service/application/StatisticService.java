@@ -73,6 +73,11 @@ public class StatisticService implements IStatisticService {
         }
     }
 
+    @Override
+    public Statistic getStatisticFromId(Long id) {
+        return this.statisticRepository.getStatisticById(id);
+    }
+
     private void standardEmptyRoutineEverything(MqttClientData data, String payloadEntry) {
         Arrays.stream(StatisticIdentifier.values()).forEach(identifier->{
             if(data.getStatistics().stream().noneMatch(statistic -> statistic.getIdentifier().equals(identifier)))
@@ -171,9 +176,9 @@ public class StatisticService implements IStatisticService {
     }
 
     private void standardRoutine(MqttClientData clientData, String payloadEntry, Statistic newestStatistic, StatisticIdentifier identifier) {
-        float difference =  Float.parseFloat( payloadEntry) - newestStatistic.getData();
-        float differencePercent = newestStatistic.getData() * 100 / Float.parseFloat( payloadEntry);
-        float savedEnergy=  newestStatistic.getConsumptionPercent() - differencePercent;
+        float difference =  Float.parseFloat(payloadEntry) - newestStatistic.getData();
+        float differencePercent = newestStatistic.getData() * 100 / Float.parseFloat(payloadEntry);
+        float savedEnergy = differencePercent - newestStatistic.getConsumptionPercent();
         Statistic statistic = new Statistic(identifier, clientData, DateTime.now(), difference, differencePercent, savedEnergy);
         statisticRepository.save(statistic);
     }
