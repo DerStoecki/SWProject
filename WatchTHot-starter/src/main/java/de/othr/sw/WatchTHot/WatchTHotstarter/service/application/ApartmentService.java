@@ -142,6 +142,7 @@ public class ApartmentService implements IApartmentService {
     public void setDummyUsers(List<User> dummyUser) {
         dummyUser.forEach(user ->
                 this.dummyApartment.addUser(user));
+        this.apartmentRepository.save(this.dummyApartment);
     }
 
     @Override
@@ -150,6 +151,7 @@ public class ApartmentService implements IApartmentService {
     }
     @Override
     public Apartment getDummyApartment() {
+        this.dummyApartment = this.apartmentRepository.getApartmentById(this.dummyApartment.getId());
         return this.dummyApartment;
     }
 

@@ -2,7 +2,6 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.DeviceType;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
-import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.Payload;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
@@ -40,8 +39,10 @@ public class VisualizerService implements IVisualizerService {
         setupDummyApartment();
     }
 
-    private void setupDummyApartment() {
-        this.apartmentService.setDummyUsers(this.userService.getDummyUser(this.apartmentService.getDummyApartment()));
+    public void setupDummyApartment() {
+        List<User> user= this.userService.getDummyUser();
+        user.forEach(u->this.userService.addApartmentToUser(u, this.apartmentService.getDummyApartment()));
+        this.apartmentService.setDummyUsers(user);
     }
 
 
@@ -76,6 +77,9 @@ public class VisualizerService implements IVisualizerService {
                 }
                 else if(data.getDeviceType().equals(DeviceType.METER)){
                     addMap(this.roomMeterMap, room, data);
+                    if(data.getYearlyStatistic().isEmpty()){
+                        this.apartmentService.getRoomService().getStatisticService().calculateInitStatistic(data);
+                    }
                 }
                 else if(data.getDeviceType().equals(DeviceType.THERMOSTAT)){
                     this.thermostat = data;

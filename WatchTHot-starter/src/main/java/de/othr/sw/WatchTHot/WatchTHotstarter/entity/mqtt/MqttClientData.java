@@ -1,6 +1,7 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt;
 
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import org.joda.time.DateTimeZone;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * MqttClientData DB will have Topic, Payload, DeviceType and ISO Timestamp
@@ -104,6 +106,24 @@ public class MqttClientData {
 
     public List<Statistic> getStatistics() {
         return Collections.unmodifiableList(this.statistics);
+    }
+
+    public List<Statistic> getHourlyStatistic(){
+        return this.statistics.stream().filter(statistic -> statistic.getIdentifier().equals(StatisticIdentifier.HOUR)).collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<Statistic> getDailyStatistic(){
+        return this.statistics.stream().filter(statistic -> statistic.getIdentifier().equals(StatisticIdentifier.DAY)).collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<Statistic> getWeeklyStatistic(){
+        return this.statistics.stream().filter(statistic -> statistic.getIdentifier().equals(StatisticIdentifier.WEEK)).collect(Collectors.toUnmodifiableList());
+    }
+    public List<Statistic> getMonthlyStatistic(){
+        return this.statistics.stream().filter(statistic -> statistic.getIdentifier().equals(StatisticIdentifier.MONTH)).collect(Collectors.toUnmodifiableList());
+    }
+    public List<Statistic> getYearlyStatistic(){
+        return this.statistics.stream().filter(statistic -> statistic.getIdentifier().equals(StatisticIdentifier.YEAR)).collect(Collectors.toUnmodifiableList());
     }
     public void addStatistic(Statistic statistic) {
         if (!this.getStatistics().contains(statistic)) {

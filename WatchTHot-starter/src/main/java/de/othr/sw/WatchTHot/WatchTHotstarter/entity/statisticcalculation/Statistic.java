@@ -25,19 +25,19 @@ public class Statistic {
     private String identifier;
     @Column(name="CONSUMPTION_PERCENT")
     private float consumptionPercent;
-    @Column(name="CONSUMPTION_PERCENT_DIFFERENCE")
-    private float consumptionPercentDifference;
+    @Column(name="SAVED_ENERGY_PERCENT_DIFFERENCE")
+    private float consumptionSavePercent;
     @ManyToOne
     private MqttClientData client;
 
 
-    public Statistic(StatisticIdentifier identifier, MqttClientData client, DateTime time, float data, float consumptionPercent, float consumptionPercentDifference){
+    public Statistic(StatisticIdentifier identifier, MqttClientData client, DateTime time, float data, float consumptionPercent, float consumptionSave){
         this.data = data;
         this.client = client;
         this.timeStamp = time.toString();
         this.identifier = identifier.name();
         this.consumptionPercent = consumptionPercent;
-        this.consumptionPercentDifference = consumptionPercentDifference;
+        this.consumptionSavePercent = consumptionSave;
     }
 
     public Statistic() {
@@ -78,6 +78,10 @@ public class Statistic {
 
     public float getConsumptionPercent() {
         return consumptionPercent;
+    }
+
+    public float getConsumptionSavePercent() {
+        return consumptionSavePercent;
     }
 
     @Override

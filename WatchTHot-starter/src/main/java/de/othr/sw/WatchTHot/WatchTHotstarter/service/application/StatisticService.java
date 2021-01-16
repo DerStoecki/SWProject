@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,8 +61,26 @@ public class StatisticService implements IStatisticService {
     public void loadRoomData(List<MqttClientData> clientList) {
         this.currentClients.clear();
         this.currentClients = clientList;
+    }
+
+    @Override
+    public void calculateInitStatistic(MqttClientData data) {
+        if(data.getTopics().size()>0){
+            if(data.getTopics().get(0).getPayloads().size()>0){
+                this.standardEmptyRoutineEverything(data, data.getTopics().get(0)
+                        .getPayloads().get(data.getTopics().size()-1).getPayloadEntry());
+            }
+        }
+    }
+
+    private void standardEmptyRoutineEverything(MqttClientData data, String payloadEntry) {
+        Arrays.stream(StatisticIdentifier.values()).forEach(identifier->{
+            if(data.getStatistics().stream().noneMatch(statistic -> statistic.getIdentifier().equals(identifier)))
+            this.standardEmptyRoutine(data, payloadEntry, identifier);
+        });
 
     }
+
     //TODO CALCULATION
     //Help from https://riptutorial.com/spring/example/21209/cron-expression <-- Examples
     @Scheduled(cron = "0 0 * * * *")
@@ -119,7 +138,7 @@ public class StatisticService implements IStatisticService {
     }
 
     //Do every month and if month is quarter or is year ---> extra statistic with identifier
-    @Scheduled(cron = "0 0 0 1 * ")
+    @Scheduled(cron = "0 0 0 1 * ?")
     public void calculateMeterMonthly(){
         this.currentClients.forEach(clientData -> {
             List<Statistic> monthStatistic = getStatisticByIdentifier(clientData, StatisticIdentifier.MONTH);
@@ -154,8 +173,8 @@ public class StatisticService implements IStatisticService {
     private void standardRoutine(MqttClientData clientData, String payloadEntry, Statistic newestStatistic, StatisticIdentifier identifier) {
         float difference =  Float.parseFloat( payloadEntry) - newestStatistic.getData();
         float differencePercent = newestStatistic.getData() * 100 / Float.parseFloat( payloadEntry);
-        float consumptionExhaust= differencePercent - newestStatistic.getConsumptionPercent();
-        Statistic statistic = new Statistic(identifier, clientData, DateTime.now(), difference, differencePercent, consumptionExhaust);
+        float savedEnergy=  newestStatistic.getConsumptionPercent() - differencePercent;
+        Statistic statistic = new Statistic(identifier, clientData, DateTime.now(), difference, differencePercent, savedEnergy);
         statisticRepository.save(statistic);
     }
 

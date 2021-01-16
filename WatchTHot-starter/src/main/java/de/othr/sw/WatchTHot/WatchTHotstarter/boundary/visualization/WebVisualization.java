@@ -1,5 +1,6 @@
 package de.othr.sw.WatchTHot.WatchTHotstarter.boundary.visualization;
 
+import de.othr.sw.WatchTHot.WatchTHotstarter.entity.mqtt.MqttClientData;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Apartment;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Privilege;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
@@ -10,7 +11,6 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.PrivilegeToLowEx
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.RegisterFailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -116,6 +117,11 @@ public class WebVisualization {
         model.addAttribute("roomTemperatures", this.visualizerService.getRoomTemperature());
         model.addAttribute("roomMeter", this.visualizerService.getRoomMeter());
         model.addAttribute("thermostat", this.visualizerService.getThermostat());
+        List<MqttClientData> meter = new ArrayList<>();
+                this.visualizerService.getRoomMeter().forEach((key,value)->{
+                    meter.addAll(value.stream().filter(data->data.getYearlyStatistic().size()>0).collect(Collectors.toList()));
+                });
+        model.addAttribute("allMeter", meter);
         if(this.entityUser.getPrivilege().getLevel()>=1){
             model.addAttribute("privilege", true);
             model.addAttribute("temperature", new BoundaryTempertaure());
@@ -185,5 +191,41 @@ public class WebVisualization {
             return "redirect:/smarthome/rooms";
         }
         return "redirect:/";
+    }
+    @PostMapping({"/postStatistic/day"})
+    public String postDayStatistic(){
+        if(this.entityUser == null){
+            return "redirect:/";
+        }else {
+            System.out.println("worked");
+            return "redirect:/smarthome/rooms";
+        }
+    }
+    @PostMapping({"/postStatistic/week"})
+    public String postWeekStatistic(){
+        if(this.entityUser == null){
+            return "redirect:/";
+        }else {
+            System.out.println("worked");
+            return "redirect:/smarthome/rooms";
+        }
+    }
+    @PostMapping({"/postStatistic/month"})
+    public String postMonthStatistic(){
+        if(this.entityUser == null){
+            return "redirect:/";
+        }else {
+            System.out.println("worked");
+            return "redirect:/smarthome/rooms";
+        }
+    }
+    @PostMapping({"/postStatistic/year"})
+    public String postYearStatistic(){
+        if(this.entityUser == null){
+            return "redirect:/";
+        }else {
+            System.out.println("worked");
+            return "redirect:/smarthome/rooms";
+        }
     }
 }

@@ -22,7 +22,7 @@ public interface IUserService {
 
     void changePassword(String oldPw, String newPwd, User user) throws IOException, PasswordIncorrectException;
 
-    List<User> getDummyUser(Apartment dummyApartment);
+    List<User> getDummyUser();
 
     void addApartmentToUser(User user, Apartment apartment);
 

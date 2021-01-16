@@ -49,6 +49,7 @@ public class UserService implements IUserService {
         User newUser = new User(jsonConfigObject.get("username").getAsString(), jsonConfigObject.get("password").getAsString());
         Optional<User> alreadyExist= userRepository.getUserByUsername(newUser.getUsername());
         if(alreadyExist.isPresent()){
+            this.dummyUser.add(alreadyExist.get());
             return;
         }
         if(jsonConfigObject.has("firstName") && jsonConfigObject.has("familyName")){
@@ -164,11 +165,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    @Transactional
-    public List<User> getDummyUser(Apartment dummyApartment) {
-        this.dummyUser.forEach(user->{
-            user.addApartment(dummyApartment);
-           });
+    public List<User> getDummyUser() {
         return this.dummyUser;
     }
 

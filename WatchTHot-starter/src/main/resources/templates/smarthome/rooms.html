@@ -72,23 +72,43 @@
                 <div th:case="*">
 
                     <th:block data-th-each="room:${roomMeter}">
-                        <div class ="row mb-3">
+                        <div class ="row mb-4">
                             <div class="col-sm-4 themed-grid-col" th:id = "${room.getKey().getId()}">
                                 <td th:utext="${room.getKey().getRoomName()}"></td>
                             </div>
 
-                        <div class ="row mb-2">
+                        <div class ="row mb-4">
                             <div class="col-2 themed-grid-col">Meter Name</div>
                             <div class="col-2 themed-grid-col">Meter Data</div>
+                            <div class="col-2 themed-grid-col">Meter Consumption Hourly</div>
+                            <div class="col-2 themed-grid-col">Energy Save Percent</div>
+
                         </div>
                             <th:block th:each="data:${room.getValue()}">
-                                <div class ="row mb-2">
+                                <div class ="row mb-8">
                                 <div class ="col-sm-2 themed-grid-col">
                                     <td th:text="${data.getName()}"></td>
                                 </div>
                                 <div class ="col-sm-2 themed-grid-col">
                                     <td th:text="${data.getTopics().get(0).getMostRecentPayload().getPayloadEntry()}"></td>
                                 </div>
+                                    <div class = "col-sm-2 themed-grid-col" th:switch="${data.getHourlyStatistic().size()}">
+                                        <div th:case="0">
+                                            <p>No Data Available Yet.</p>
+                                        </div>
+                                        <div th:case="*">
+                                    <td th:text="${data.getHourlyStatistic().get(data.getHourlyStatistic().size()-1).getData()}"></td>
+                                        </div>
+                                    </div>
+                                    <div class = "col-sm-2 themed-grid-col" th:switch="${data.getHourlyStatistic().size()}">
+                                            <div th:case="0">
+                                                <p>No Data Available Yet.</p>
+                                            </div>
+                                            <div th:case="*">
+                                                    <td th:text="${data.getHourlyStatistic().get(data.getHourlyStatistic().size()-1).getConsumptionSavePercent()}"></td>
+                                            </div>
+                                </div>
+
                                 </div>
                             </th:block>
                         </div>
@@ -97,6 +117,67 @@
                 </div>
 
             </div>
+
+<div th:object="${allMeter}">
+    <th:block data-th-each="meter:${allMeter}">
+    <div class = "row mb-4">
+        <div class = "col mb-2 themed-grid-col">
+        <div class = "col mb-1 themed-grid-col">
+        <td th:text="${meter.getName()}"></td>
+        </div>
+            <div class = "col mb-1 themed-grid-col">
+                <td th:text="${meter.getDailyStatistic().get(meter.getDailyStatistic().size()-1).getConsumptionSavePercent()}"></td>
+            </div>
+        </div>
+        <div class = "col mb-2 themed-grid-col">
+            <div class = "col mb-1 themed-grid-col">
+                <td th:text="${meter.getName()}"></td>
+            </div>
+            <div class = "col mb-1 themed-grid-col">
+                <td th:text="${meter.getDailyStatistic().get(meter.getDailyStatistic().size()-1).getConsumptionSavePercent()}"></td>
+            </div>
+        </div>
+        <div class = "col mb-2 themed-grid-col">
+            <div class = "col mb-1 themed-grid-col">
+                <td th:text="${meter.getName()}"></td>
+            </div>
+            <div class = "col mb-1 themed-grid-col">
+                <td th:text="${meter.getMonthlyStatistic().get(meter.getMonthlyStatistic().size()-1).getConsumptionSavePercent()}"></td>
+            </div>
+        </div>
+        <div class = "col mb-2 themed-grid-col">
+            <div class = "col mb-1 themed-grid-col">
+                <td th:text="${meter.getName()}"></td>
+            </div>
+            <div class = "col mb-1 themed-grid-col">
+                <td th:text="${meter.getYearlyStatistic().get(meter.getYearlyStatistic().size()-1).getConsumptionSavePercent()}"></td>
+            </div>
+        </div>
+</div>
+    </th:block>
+<div class ="row mb-4">
+    <div class ="col mb-4">
+        <form method="post" th:action="@{/postStatistic/day}">
+            <button class="w-40 btn btn-lg btn-success" type="submit" >Submit dailyStatistic</button>
+        </form>
+    </div>
+    <div class ="col mb-4">
+        <form method="post" th:action="@{/postStatistic/week}">
+            <button class="w-40 btn btn-lg btn-success" type="submit">Submit weeklyStatistic</button>
+        </form>
+    </div>
+    <div class ="col mb-4">
+        <form method="post" th:action="@{/postStatistic/month}">
+            <button class="w-40 btn btn-lg btn-success" type="submit">Submit monthlyStatistic</button>
+        </form>
+    </div>
+    <div class ="col mb-4">
+        <form method="post" th:action="@{/postStatistic/year}">
+            <button class="w-40 btn btn-lg btn-success" type="submit">Submit yearlyStatistic</button>
+        </form>
+    </div>
+</div>
+
 
 <div th:id = "Thermostat" th:object="${thermostat}">
      <div class = "row mb-4">
