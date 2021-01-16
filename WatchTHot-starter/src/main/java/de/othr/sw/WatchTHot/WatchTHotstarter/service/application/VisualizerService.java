@@ -71,9 +71,11 @@ public class VisualizerService implements IVisualizerService {
     @Override
     public void filterRooms() {
         this.selectedApartment.getRooms().forEach(room->{
+            Room roomToPut = this.apartmentService.getRoomService().getRoomById(room.getId());
             room.getData().forEach(data-> {
+                MqttClientData dataToGet = this.apartmentService.getRoomService().getClientById(data.getId());
                 if(data.getDeviceType().equals(DeviceType.TEMPERATURE_SENSOR)){
-                    addMap(this.roomTemperatureMap, room, data);
+                    addMap(this.roomTemperatureMap, roomToPut, dataToGet);
                 }
                 else if(data.getDeviceType().equals(DeviceType.METER)){
                     addMap(this.roomMeterMap, room, data);
@@ -172,10 +174,34 @@ public class VisualizerService implements IVisualizerService {
 
     @Override
     public void updateData() {
-        this.clearData();
         this.selectedApartment = this.apartmentService.getApartmentById(this.selectedApartment.getId());
         this.apartmentService.setCurrentApartment(this.selectedApartment);
         this.filterRooms();
+    }
+
+    @Override
+    public Map<Room, List<MqttClientData>> getRoomTemperatureForVisualizer() {
+
+        return visualizerLogic(this.roomTemperatureMap);
+
+
+    }
+
+    private Map<Room, List<MqttClientData>> visualizerLogic(Map<Room, List<MqttClientData>> map) {
+
+        Map<Room, List<MqttClientData>> copyOfCurrent = new HashMap<>();
+        map.forEach((key,value)->{
+            Room room = this.apartmentService.getRoomService().getRoomById(key.getId());
+            List<MqttClientData> copiedClients = new ArrayList<>();
+            value.forEach(clientData -> copiedClients.add(this.apartmentService.getRoomService().getClientById(clientData.getId())));
+            copyOfCurrent.put(room, copiedClients);
+        });
+        return copyOfCurrent;
+    }
+
+    @Override
+    public Map<Room, List<MqttClientData>> getRoomMeterForVisualizer() {
+       return this.visualizerLogic(this.roomMeterMap);
     }
 
     public List<Apartment> getApartmentList() throws CannotDisplayApartmentsException {

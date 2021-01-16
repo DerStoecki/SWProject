@@ -35,4 +35,6 @@ public interface IRoomService {
     MqttClientData getClientById(Long id);
 
     IStatisticService getStatisticService();
+
+    Room getRoomById(Long id);
 }

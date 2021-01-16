@@ -15,4 +15,5 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
     List<Room> getRoomsByApartment(Apartment apartment);
     List<Room> getRoomsByApartmentId(Long id);
     Room getRoomByRoomNameAndApartment(String name, Apartment apartment);
+    Room getRoomById(Long id);
 }

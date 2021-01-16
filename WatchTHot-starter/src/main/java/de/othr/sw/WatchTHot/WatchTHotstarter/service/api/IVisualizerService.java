@@ -40,4 +40,7 @@ public interface IVisualizerService {
     void clearData();
 
     void updateData();
+
+    Map<Room, List<MqttClientData>>  getRoomTemperatureForVisualizer();
+    Map<Room, List<MqttClientData>> getRoomMeterForVisualizer();
 }

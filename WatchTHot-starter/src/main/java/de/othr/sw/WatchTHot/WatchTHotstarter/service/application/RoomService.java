@@ -135,6 +135,11 @@ public class RoomService implements IRoomService {
         return this.statisticService;
     }
 
+    @Override
+    public Room getRoomById(Long id) {
+        return this.roomRepository.getRoomById(id);
+    }
+
     /**
      * Update ALL ROOMS every 59 minutes
      */
