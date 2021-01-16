@@ -114,11 +114,12 @@ public class WebVisualization {
 
     private void roomLogic(Model model) {
        this.visualizerService.updateData();
-        model.addAttribute("roomTemperatures", this.visualizerService.getRoomTemperature());
-        model.addAttribute("roomMeter", this.visualizerService.getRoomMeter());
+
+        model.addAttribute("roomTemperatures", this.visualizerService.getRoomTemperatureForVisualizer());
+        model.addAttribute("roomMeter", this.visualizerService.getRoomMeterForVisualizer());
         model.addAttribute("thermostat", this.visualizerService.getThermostat());
         List<MqttClientData> meter = new ArrayList<>();
-                this.visualizerService.getRoomMeter().forEach((key,value)->{
+                this.visualizerService.getRoomMeterForVisualizer().forEach((key,value)->{
                     meter.addAll(value.stream().filter(data->data.getYearlyStatistic().size()>0).collect(Collectors.toList()));
                 });
         model.addAttribute("allMeter", meter);

@@ -188,6 +188,7 @@
     </div>
 </div>
     </div>
+    </div>
        <div th:if="${privilege}">
             <form method="post" th:object="${temperature}" th:action="@{/setTemperature}" id = "submitThermostat">
                 <p class="mt-5 mb-3 text-muted">Thermostat Value</p>
@@ -214,7 +215,7 @@
             <button class="w-40 btn btn-lg btn-danger" type="submit" id = "logoutButton">Logout</button>
         </form>
     </div>
-    </div>
+
 
 </main>
 
