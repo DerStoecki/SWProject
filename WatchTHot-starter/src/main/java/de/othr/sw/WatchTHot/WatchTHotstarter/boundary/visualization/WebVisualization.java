@@ -253,4 +253,16 @@ public class WebVisualization {
         });
         this.contributorService.sendStatistic(identifier, filteredStatistic);
     }
+
+  /* @RequestMapping("/error")
+    public String handleError(){
+        if(this.entityUser==null){
+            return "redirect:/";
+        } else if(this.selectedApartment==null){
+            return "redirect:/smarthome";
+        }
+        else {
+            return "redirect:/smarthome/rooms";
+        }
+    }*/
 }
