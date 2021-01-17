@@ -8,6 +8,7 @@ class WatchTHotStarterApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }
