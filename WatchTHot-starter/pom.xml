@@ -16,6 +16,8 @@
 
 	<properties>
 			<java.version>14</java.version>
+			<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+			<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 			<bootstrap.version>4.5.3</bootstrap.version>
 			<webjars-locator.version>0.30</webjars-locator.version>
 			<lombok.version>1.18.2</lombok.version>
