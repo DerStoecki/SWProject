@@ -4,7 +4,6 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statist
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IPictureContributorService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IRetrogramService;
-import de.othr.sw.WatchTHot.WatchTHotstarter.service.application.externalService.RestTemplateBuilderConfiguration;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
@@ -27,9 +26,10 @@ public class PictureContributorService implements IPictureContributorService {
      * inspired by: https://www.baeldung.com/java-images
      * @param identifier identifier; usually from VisualizerService
      * @param statisticList usually from Visualizer Service : Most Recent Statistics
+     * @return
      */
     @Override
-    public void sendStatistic(StatisticIdentifier identifier, List<Statistic> statisticList) {
+    public boolean sendStatistic(StatisticIdentifier identifier, List<Statistic> statisticList) {
         String imagePath = "src/main/resources/static/applicationdata/picture/";
         String originalPicture  = "statisticImage.png";
         String completePath = imagePath+originalPicture;
@@ -53,10 +53,12 @@ public class PictureContributorService implements IPictureContributorService {
             byte[] fileContent = FileUtils.readFileToByteArray(new File(imagePath+"newPicture.png"));
             //Encoded String for Retrogram
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
-            this.retrogramService.sendPicture(encodedString);
+            return this.retrogramService.sendPicture(encodedString);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
 

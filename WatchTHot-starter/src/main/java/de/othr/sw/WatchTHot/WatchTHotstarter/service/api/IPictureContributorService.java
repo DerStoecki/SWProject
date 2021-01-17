@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface IPictureContributorService {
 
-    void sendStatistic(StatisticIdentifier identifier, List<Statistic> statisticList);
+    boolean sendStatistic(StatisticIdentifier identifier, List<Statistic> statisticList);
 
 }

@@ -245,13 +245,13 @@ public class WebVisualization {
         }
     }
 
-    private void postStatistic(StatisticIdentifier identifier){
+    private boolean postStatistic (StatisticIdentifier identifier){
 
         List<Statistic> filteredStatistic = new ArrayList<>();
         this.clientMeter.forEach(meter->{
             filteredStatistic.add(this.visualizerService.getMostRecentStatisticFromClient(meter, identifier));
         });
-        this.contributorService.sendStatistic(identifier, filteredStatistic);
+       return this.contributorService.sendStatistic(identifier, filteredStatistic);
     }
 
   /* @RequestMapping("/error")
