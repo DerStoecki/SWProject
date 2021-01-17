@@ -1,4 +1,4 @@
-package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
+package de.othr.sw.WatchTHot.WatchTHotstarter.service.application.externalService;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
