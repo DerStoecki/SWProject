@@ -61,11 +61,11 @@ public class RoomService implements IRoomService {
         if(((List<Room>)roomRepository.findAll()).size() >= 5){
             return;
         }
-        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/childrenRoom.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/kitchen.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/livingRoom.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/parentsRoom.json"))));
-        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/room/utilityRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/resources/static/applicationdata/initJson/room/childrenRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/resources/static/applicationdata/initJson/room/kitchen.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/resources/static/applicationdata/initJson/room/livingRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/resources/static/applicationdata/initJson/room/parentsRoom.json"))));
+        this.initJson(new String(Files.readAllBytes(Paths.get("src/main/resources/static/applicationdata/initJson/room/utilityRoom.json"))));
     }
 
     private void initJson(String config){

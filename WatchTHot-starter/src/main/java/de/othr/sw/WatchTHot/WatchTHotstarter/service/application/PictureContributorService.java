@@ -3,6 +3,8 @@ package de.othr.sw.WatchTHot.WatchTHotstarter.service.application;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.Statistic;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.statisticcalculation.StatisticIdentifier;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IPictureContributorService;
+import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IRetrogramService;
+import de.othr.sw.WatchTHot.WatchTHotstarter.service.application.externalService.RestTemplateBuilderConfiguration;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
@@ -16,7 +18,10 @@ import java.util.StringJoiner;
 
 public class PictureContributorService implements IPictureContributorService {
 
-    public PictureContributorService(){}
+    private IRetrogramService retrogramService;
+    public PictureContributorService(IRetrogramService retrogramService){
+        this.retrogramService = retrogramService;
+    }
 
     /**
      * inspired by: https://www.baeldung.com/java-images
@@ -25,7 +30,7 @@ public class PictureContributorService implements IPictureContributorService {
      */
     @Override
     public void sendStatistic(StatisticIdentifier identifier, List<Statistic> statisticList) {
-        String imagePath = "src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/picture/";
+        String imagePath = "src/main/resources/static/applicationdata/picture/";
         String originalPicture  = "statisticImage.png";
         String completePath = imagePath+originalPicture;
         String identifierString = identifier.toString();
@@ -48,6 +53,7 @@ public class PictureContributorService implements IPictureContributorService {
             byte[] fileContent = FileUtils.readFileToByteArray(new File(imagePath+"newPicture.png"));
             //Encoded String for Retrogram
             String encodedString = Base64.getEncoder().encodeToString(fileContent);
+            this.retrogramService.sendPicture(encodedString);
         } catch (IOException e) {
             e.printStackTrace();
         }

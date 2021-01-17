@@ -9,6 +9,7 @@ import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.Room;
 import de.othr.sw.WatchTHot.WatchTHotstarter.entity.user.User;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IMqttService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IPictureContributorService;
+import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IRetrogramService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.api.IVisualizerService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.application.PictureContributorService;
 import de.othr.sw.WatchTHot.WatchTHotstarter.service.exceptions.LoginFailException;
@@ -40,17 +41,18 @@ public class WebVisualization {
     private List<Apartment> apartmentList;
     private Apartment selectedApartment;
     private Model roomModel;
-    private IPictureContributorService contributorService = new PictureContributorService();
+    private IPictureContributorService contributorService;
     private List<MqttClientData> clientMeter;
 
 
 
     @Autowired
-    public WebVisualization(IVisualizerService visualizerService, IMqttService mqttService, Environment environment){
+    public WebVisualization(IVisualizerService visualizerService, IMqttService mqttService, Environment environment, IRetrogramService retrogramService){
         this.visualizerService = visualizerService;
         this.environment = environment;
         this.applicationMode = environment.getProperty("app-mode");
         this.mqttService = mqttService;
+        this.contributorService = new PictureContributorService(retrogramService);
     }
 
     @RequestMapping({"/", "/index", "/login"})

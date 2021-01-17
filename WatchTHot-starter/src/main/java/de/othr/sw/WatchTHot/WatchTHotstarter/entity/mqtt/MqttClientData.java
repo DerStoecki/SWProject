@@ -134,4 +134,15 @@ public class MqttClientData {
         this.statistics.remove(statistic);
     }
 
+    @Override
+    public String toString() {
+        return "MqttClientData{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", deviceType=" + deviceType +
+                ", room=" + room +
+                ", topics=" + topics +
+                ", statistics=" + statistics +
+                '}';
+    }
 }

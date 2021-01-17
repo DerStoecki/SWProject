@@ -44,7 +44,7 @@ public class ApartmentService implements IApartmentService {
     }
 
     private void createDummyApartment() throws IOException {
-        String addressConfig = new String(Files.readAllBytes(Paths.get("src/main/java/de/othr/sw/WatchTHot/WatchTHotstarter/service/application/initJson/address/AddressApartment0.json")));
+        String addressConfig = new String(Files.readAllBytes(Paths.get("src/main/resources/static/applicationdata/initJson/address/AddressApartment0.json")));
         JsonObject jsonConfigObject = new Gson().fromJson(addressConfig, JsonObject.class);
         Optional<Apartment> existingApartment = Optional.ofNullable(this.apartmentRepository.getApartmentById(Long.parseLong("1")));
         if(existingApartment.isPresent()){
